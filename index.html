@@ -135,7 +135,7 @@ body.no-photo .hero-photo{display:none}
 /* 세 덩어리를 아래 제목 폭에 맞춰 양끝 정렬합니다 */
 .hero-sub{display:flex;justify-content:space-between;
   width:100%;margin:0 auto;line-height:1.3;
-  font-family:var(--pt);font-weight:400;font-size:clamp(12.65px,3.52vw,15.4px);
+  font-family:var(--pt);font-weight:400;font-size:clamp(16px,5vw,21.5px);
   letter-spacing:.04em;white-space:nowrap;color:var(--ink-strong)}
 .hero-top{position:absolute;left:0;right:0;z-index:2;
   top:calc(env(safe-area-inset-top) + 8px)}   /* 화면 상단 고정 */
@@ -215,16 +215,12 @@ body.no-photo .hero-photo{display:none}
 /* ═══ 달력 (1~2주차만) ════════════════════════════════════ */
 .big-line,.venue-nm{font-family:var(--pt);font-weight:700;font-size:var(--s2);color:var(--ink-strong);
   letter-spacing:-.02em;line-height:1.32}
-/* 두 줄을 좌우로 살짝 어긋나게 배치합니다 */
-/* 어긋남은 화면 폭에 비례 — 작은 폰에서 글자가 잘리지 않게 min() 으로 잠급니다 */
-/* 어긋남 60px. 좁은 화면에서는 글자가 잘리지 않는 만큼만 밀립니다 */
-#calD{margin-bottom:0;transform:translateX(calc(min(60px, 5vw) * -1))}
-#calT{margin-bottom:10px;transform:translateX(min(60px, 5vw))}
-.time-note{text-align:right;margin-bottom:78px}   /* 달력 위 (52 × 1.5) */
-@media (min-width:700px){                  /* 데스크톱은 여유가 있어 그대로 60px */
-  #calD{transform:translateX(-60px)}
-  #calT{transform:translateX(60px)}
-}
+/* 첫 줄은 왼쪽 끝, 둘째 줄과 안내문은 오른쪽 끝에 붙입니다.
+   margin 을 모두 0 으로 두면 세 줄 사이 간격이 글줄 사이 여백만 남아
+   1↔2 와 2↔3 이 같아집니다 (각각 약 9.9px / 9.7px). */
+#calD{text-align:left;margin-bottom:0}
+#calT{text-align:right;margin-bottom:0}
+.time-note{text-align:right;margin-top:0;margin-bottom:78px}   /* 달력 위 */
 .cal-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr))}
 /* 1fr 은 내용이 넓으면 칸을 늘립니다. minmax(0,1fr) 로 고정해야
    OUR WEDDING 만 좌우로 넘치고 칸 폭은 그대로 유지됩니다. */
@@ -256,6 +252,13 @@ body.no-photo .hero-photo{display:none}
 .cal-grid .d.mark::after{content:'';position:absolute;left:50%;top:50%;
   width:30px;height:30px;transform:translate(-50%,-50%);
   background:var(--ink-strong);border-radius:50%;z-index:1}
+/* 연휴 4·5일 — 예식일과 같은 크기의 원을 연하게 깔았습니다.
+   더 진하게/연하게 하시려면 아래 .1 만 조절하시면 됩니다.
+   0.5 를 넘기면 숫자가 안 보이니 그때는 i 색을 var(--bg) 로 바꿔야 합니다. */
+.cal-grid .d.hl:not(.mark)::after{content:'';position:absolute;left:50%;top:50%;
+  width:30px;height:30px;transform:translate(-50%,-50%);
+  background:rgba(0,0,0,.1);border-radius:50%;z-index:1}
+.cal-grid .d.hl:not(.mark) u{top:calc(50% + 17px)}   /* 3일 라벨과 높이 맞춤 */
 .cal-note{font-size:var(--s6);color:var(--ink-2);margin-top:22px;line-height:1.8}
 .cd{display:flex;align-items:baseline;justify-content:center;gap:20px;margin-top:78px}
 .cd div{display:flex;flex-direction:column;align-items:center;gap:5px}
@@ -632,7 +635,11 @@ const CONFIG = {
      GitHub Pages 에 올리실 때는 아래를 'img/hero.jpg' 로 바꾸세요.
      그러면 index.html 이 140KB 가벼워지고 브라우저가 사진을 따로 캐싱합니다. */
   heroImage:'',
-  heroPhoto:true,          /* false 로 바꾸면 첫 화면 사진이 숨겨집니다 */
+  /* 스티커 켜고 끄기 — true 로 바꾸면 그대로 되살아납니다 */
+  heroPhoto:false,         /* 1번 첫 화면 · 두 분 사진 */
+  invSea:false,            /* 2번 인사말 · 바다 */
+  tkHp:false,              /* 3번 티켓 · 헤드폰 */
+  heroPlane:true,          /* 1번 첫 화면 · 비행기 (그대로 둡니다) */
   heroOpacity:1,           /* 1 = 원본 그대로. 흐리게 하려면 0.4~0.7 */
 
   /* 배경 오일파스텔 낙서 — true 로 바꾸면 전부 되살아납니다.
@@ -696,9 +703,9 @@ const CONFIG = {
        (또는 mymaps.google.com 에서 지도를 만들어 공유)                */
   picks:{
     title:'Our Picks',
-    intro:['와주시는 여러분께,',
-           '저희가 좋아하는 장소들로',
-           '작은 여행 가이드를 만들어 드립니다.'],
+    intro:['이번 여행이 조금 더 풍성하시길 바라며,',
+           '저희가 좋아하는 곳들로',
+           '작은 가이드를 만들어 보내드립니다.'],
     /* 보내주신 링크는 /edit 이었습니다. 하객에게 편집 화면이 열리므로
        /viewer 로 바꿔 넣었습니다. mid 값은 그대로입니다. */
     mapUrl:'https://www.google.com/maps/d/viewer?mid=1Xuru6uc7tRBqWyDdEUJzhnkaK4pbDrY',
@@ -717,81 +724,80 @@ const CONFIG = {
       { key:'hot',   label:'복합문화',  icon:'\u2728' },
     ],
     spots:[
-      /* ── 산책 · 풍경 ─────────────────────────── */
       { no:'01', c:'walk', name:'학리방파제', time:'도보 1분',
         desc:'예식장 바로 앞 한적한 어항 산책로.\n빨간 등대가 서 있습니다.' },
+      { no:'10', c:'cafe', name:'카페 숲 (SOOP)', rating:'4.3', time:'도보 2분',
+        desc:'학리 포구 통창 오션뷰 카페.\n루프탑도 있습니다. (화요일 휴무)' },
+      { no:'30', c:'food', name:'해녀집', rating:'4.1', time:'도보 5분',
+        desc:'학리 포구의 정겨운 노포.\n싱싱한 해산물과 장어구이.' },
+      { no:'31', c:'food', name:'학리집', rating:'4.3', time:'도보 5분',
+        desc:'바다 옆 야외 테이블이 있습니다.\n해산물과 전복죽.' },
       { no:'02', c:'walk', name:'일광해수욕장', rating:'4.0', time:'차로 4분',
         desc:'파도가 잔잔해 거닐기 좋은 백사장.\n곡선으로 길게 이어집니다.' },
       { no:'03', c:'walk', name:'죽성드림세트장', rating:'4.2', time:'차로 8분',
         desc:'바위 절벽 위 성당 외관의 포토존.\n바다를 배경으로 세워져 있습니다.' },
-      { no:'04', c:'walk', name:'오시리아 해안산책로', rating:'4.6', time:'차로 22분',
-        desc:'아난티·힐튼 앞 바다를 따라 걷는 길.\n해동용궁사까지 이어집니다.' },
-      { no:'05', c:'walk', name:'해동용궁사', rating:'4.5', time:'차로 25분',
-        desc:'바다 절벽 바로 위에 세워진 사찰.\n부산에 오셨다면 한 번쯤.' },
-      { no:'06', c:'walk', name:'광안리해수욕장', rating:'4.7', time:'차로 40분',
-        desc:'청춘의 바다이자 야경 명소.\n저녁에 특히 좋습니다.' },
-      { no:'07', c:'walk', name:'광안대교', rating:'4.6', time:'차로 40분',
-        desc:'부산을 대표하는 다리.\n밤에 불이 들어옵니다.' },
-      { no:'08', c:'walk', name:'흰여울문화마을', rating:'4.4', time:'차로 60분',
-        desc:'절벽 위 골목마다 바다가 보입니다.\n부산의 산토리니라 불립니다.' },
-      { no:'09', c:'walk', name:'용두산공원', rating:'4.3', time:'차로 55분',
-        desc:'부산타워에서 원도심을 360도로.\n부산역 가기 전 들르기 좋습니다.' },
-
-      /* ── 카페 ────────────────────────────────── */
-      { no:'10', c:'cafe', name:'카페 숲 (SOOP)', rating:'4.3', time:'도보 2분',
-        desc:'학리 포구 통창 오션뷰 카페.\n루프탑도 있습니다. (화요일 휴무)' },
-      { no:'11', c:'cafe', name:'스타벅스 기장임랑원점', rating:'4.5', time:'차로 15분',
-        desc:'넓은 잔디 정원과 바다가 만납니다.\n조형물이 놓여 있습니다.' },
-      { no:'12', c:'cafe', name:'웨이브온 커피', rating:'4.2', time:'차로 18분',
-        desc:'한국건축문화대상을 받은 건축미.\n파노라마 오션뷰. 주말엔 붐빕니다.' },
-      { no:'13', c:'cafe', name:'블루보틀 부산민락', rating:'4.5', time:'차로 38분',
-        desc:'수영강변 통창 프레임타워.\n건물 자체가 볼거리입니다.' },
-      { no:'14', c:'cafe', name:'타타에스프레소바', rating:'3.9', time:'차로 40분',
-        desc:'민락동 골목의 작은 빈티지 바.\n자리가 몇 개 없습니다.' },
-      { no:'15', c:'cafe', name:'모모스커피 영도점', rating:'4.5', time:'차로 55분',
-        desc:'옛 부두 창고를 고친 오픈 로스터리.\n커피를 좋아하신다면.' },
-      { no:'16', c:'cafe', name:'아티클 영도', time:'차로 55분',
-        desc:'절제된 미니멀 오션뷰 카페.\n영도 해안도로 위에 있습니다.' },
-
-      /* ── 베이커리 · 디저트 ───────────────────── */
       { no:'17', c:'bake', name:'라이프라이크', rating:'4.1', time:'차로 10분',
         desc:'제철 과일 케이크로 이름난 집.\n딸기 시즌엔 예약이 필요합니다.' },
       { no:'18', c:'bake', name:'칠암사계', rating:'4.1', time:'차로 12분',
         desc:'대한민국 명장의 빵집.\n소금빵이 유명합니다.' },
-      { no:'19', c:'bake', name:'삼진어묵 영도본점', rating:'4.3', time:'차로 55분',
-        desc:'대한민국 최초의 어묵 베이커리.\n선물용으로도 좋습니다.' },
-
-      /* ── 건축 · 디자인 ───────────────────────── */
+      { no:'11', c:'cafe', name:'스타벅스 기장임랑원점', rating:'4.5', time:'차로 15분',
+        desc:'넓은 잔디 정원과 바다가 만납니다.\n조형물이 놓여 있습니다.' },
+      { no:'12', c:'cafe', name:'웨이브온 커피', rating:'4.2', time:'차로 18분',
+        desc:'한국건축문화대상을 받은 건축미.\n파노라마 오션뷰. 주말엔 붐빕니다.' },
       { no:'20', c:'arch', name:'아난티 코브', rating:'4.6', time:'차로 20분',
         desc:'해안 산책로와 서점 이터널저니.\n묵지 않아도 둘러볼 수 있습니다.' },
+      { no:'04', c:'walk', name:'오시리아 해안산책로', rating:'4.6', time:'차로 22분',
+        desc:'아난티·힐튼 앞 바다를 따라 걷는 길.\n해동용궁사까지 이어집니다.' },
       { no:'21', c:'arch', name:'빌라쥬 드 아난티', rating:'4.6', time:'차로 22분',
         desc:'프라이빗한 모던 건축 단지.\n아난티 코브 바로 옆입니다.' },
+      { no:'05', c:'walk', name:'해동용궁사', rating:'4.5', time:'차로 25분',
+        desc:'바다 절벽 바로 위에 세워진 사찰.\n부산에 오셨다면 한 번쯤.' },
+      { no:'29', c:'hot', name:'해운대블루라인파크', rating:'4.5', time:'차로 30분',
+        desc:'해안선을 달리는 해변열차와 스카이캡슐.\n예매가 필요합니다.' },
+
+      /* ── 식당 · 해산물 ───────────────────────── */
       { no:'22', c:'arch', name:'영화의전당', rating:'4.5', time:'차로 35분',
         desc:'세계 최대 지붕 캔틸레버 건축물.\n10월엔 부산국제영화제가 열립니다.' },
       { no:'23', c:'arch', name:'F1963', rating:'4.5', time:'차로 35분',
         desc:'옛 와이어 공장을 고친 문화공간.\n서점과 대나무 정원이 있습니다.' },
 
       /* ── 복합문화 ────────────────────────────── */
+      { no:'13', c:'cafe', name:'블루보틀 부산민락', rating:'4.5', time:'차로 38분',
+        desc:'수영강변 통창 프레임타워.\n건물 자체가 볼거리입니다.' },
+      { no:'06', c:'walk', name:'광안리해수욕장', rating:'4.7', time:'차로 40분',
+        desc:'청춘의 바다이자 야경 명소.\n저녁에 특히 좋습니다.' },
+      { no:'07', c:'walk', name:'광안대교', rating:'4.6', time:'차로 40분',
+        desc:'부산을 대표하는 다리.\n밤에 불이 들어옵니다.' },
+      { no:'14', c:'cafe', name:'타타에스프레소바', rating:'3.9', time:'차로 40분',
+        desc:'민락동 골목의 작은 빈티지 바.\n자리가 몇 개 없습니다.' },
       { no:'24', c:'hot', name:'밀락더마켓', rating:'4.2', time:'차로 40분',
         desc:'광안대교가 보이는 스탠드형 공간.\n먹고 마시며 앉아 있기 좋습니다.' },
       { no:'25', c:'hot', name:'러브이즈기빙', rating:'5.0', time:'차로 40분',
         desc:'광안리의 소품·문구 숍.\n작은 선물 고르기 좋습니다.' },
       { no:'26', c:'hot', name:'고릴라브루어리', time:'차로 40분',
         desc:'인더스트리얼한 수제 맥주 펍.\n광안리 바다 앞입니다.' },
+      { no:'09', c:'walk', name:'용두산공원', rating:'4.3', time:'차로 55분',
+        desc:'부산타워에서 원도심을 360도로.\n부산역 가기 전 들르기 좋습니다.' },
+
+      /* ── 카페 ────────────────────────────────── */
+      { no:'15', c:'cafe', name:'모모스커피 영도점', rating:'4.5', time:'차로 55분',
+        desc:'옛 부두 창고를 고친 오픈 로스터리.\n커피를 좋아하신다면.' },
+      { no:'16', c:'cafe', name:'아티클 영도', time:'차로 55분',
+        desc:'절제된 미니멀 오션뷰 카페.\n영도 해안도로 위에 있습니다.' },
+
+      /* ── 베이커리 · 디저트 ───────────────────── */
+      { no:'19', c:'bake', name:'삼진어묵 영도본점', rating:'4.3', time:'차로 55분',
+        desc:'대한민국 최초의 어묵 베이커리.\n선물용으로도 좋습니다.' },
+
+      /* ── 건축 · 디자인 ───────────────────────── */
       { no:'27', c:'hot', name:'무명일기', rating:'4.2', time:'차로 55분',
         desc:'1950년대 조선소 창고를 고친 공간.\n천장이 아주 높습니다.' },
       { no:'28', c:'hot', name:'피아크 (P.ARK)', rating:'4.2', time:'차로 55분',
         desc:'배를 닮은 초대형 오션뷰 공간.\n베이커리와 전시가 함께 있습니다.' },
-      { no:'29', c:'hot', name:'해운대블루라인파크', rating:'4.5', time:'차로 30분',
-        desc:'해안선을 달리는 해변열차와 스카이캡슐.\n예매가 필요합니다.' },
-
-      /* ── 식당 · 해산물 ───────────────────────── */
-      { no:'30', c:'food', name:'해녀집', rating:'4.1', time:'도보 5분',
-        desc:'학리 포구의 정겨운 노포.\n싱싱한 해산물과 장어구이.' },
-      { no:'31', c:'food', name:'학리집', rating:'4.3', time:'도보 5분',
-        desc:'바다 옆 야외 테이블이 있습니다.\n해산물과 전복죽.' },
       { no:'32', c:'food', name:'자갈치시장', rating:'4.0', time:'차로 55분',
         desc:'부산 최대의 전통 수산시장.\n원도심의 활기가 그대로입니다.' },
+      { no:'08', c:'walk', name:'흰여울문화마을', rating:'4.4', time:'차로 60분',
+        desc:'절벽 위 골목마다 바다가 보입니다.\n부산의 산토리니라 불립니다.' },
     ],
   },
 
@@ -801,11 +807,10 @@ const CONFIG = {
 
   accounts:[
     { side:'신랑측', list:[
-      { who:'신랑 백성준',      no:'000-000000-00000', bank:'○○은행' },
-      { who:'신랑 아버지 백우학', no:'000-000000-00000', bank:'○○은행' },
-      { who:'신랑 어머니 변정희', no:'000-000000-00000', bank:'○○은행' } ]},
+      { who:'신랑 백성준',      no:'110-498-887838', bank:'신한은행' },
+      { who:'신랑 아버지 백우학', no:'010-4504-5279', bank:'기업은행' } ]},
     { side:'신부측', list:[
-      { who:'신부 박일형',      no:'000-000000-00000', bank:'○○은행' },
+      { who:'신부 박일형',      no:'402-911393-11907', bank:'하나은행' },
       { who:'신부 아버지 박태진', no:'074-02-042044-8', bank:'부산은행' },
       { who:'신부 어머니 이덕화', no:'068-12-049242-3', bank:'부산은행' } ]},
   ],
@@ -955,6 +960,11 @@ if(!CONFIG.doodles) document.body.classList.add('no-doodle');
 })();
 
 (function(){
+  /* 꺼진 스티커는 아예 걷어냅니다 — 사진 파일도 내려받지 않습니다 */
+  if(!CONFIG.invSea)    { const e=$('.inv-sea');    if(e) e.remove(); }
+  if(!CONFIG.tkHp)      { const e=$('.tk-hp');      if(e) e.remove(); }
+  if(!CONFIG.heroPlane) { const e=$('.hero-plane'); if(e) e.remove(); }
+
   if(!CONFIG.heroPhoto){ document.body.classList.add('no-photo'); return; }
   const el=$('#heroPhoto');
   if(CONFIG.heroImage) el.src=CONFIG.heroImage;
