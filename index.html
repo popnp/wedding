@@ -76,7 +76,7 @@ a{color:inherit;text-decoration:none}
   min-height:var(--vh,100dvh);
   scroll-snap-align:start;
   display:flex;flex-direction:column;justify-content:center;align-items:center;
-  padding:calc(env(safe-area-inset-top) + 56px) 0 calc(env(safe-area-inset-bottom) + 56px);
+  padding:calc(env(safe-area-inset-top) + 40px) 0 calc(env(safe-area-inset-bottom) + 40px);
   text-align:center;
 }
 .inner{position:relative;z-index:2;width:100%;max-width:430px;margin:0 auto;padding:0 var(--pad)}
@@ -134,11 +134,12 @@ body.no-photo .hero-photo{display:none}
 .hero-title span{display:block}
 /* 세 덩어리를 아래 제목 폭에 맞춰 양끝 정렬합니다 */
 .hero-sub{display:flex;justify-content:space-between;
-  width:min(100%,396px);margin:0 auto;
-  font-family:var(--pt);font-weight:400;font-size:clamp(11.5px,3.2vw,14px);
+  width:100%;margin:0 auto;line-height:1.3;
+  font-family:var(--pt);font-weight:400;font-size:clamp(12.65px,3.52vw,15.4px);
   letter-spacing:.04em;white-space:nowrap;color:var(--ink-strong)}
 .hero-top{position:absolute;left:0;right:0;z-index:2;
-  top:calc(env(safe-area-inset-top) + 26px)}   /* 화면 상단 고정 */
+  top:calc(env(safe-area-inset-top) + 8px)}   /* 화면 상단 고정 */
+.page-hero .hero-top{padding-left:4px;padding-right:4px}   /* 헤더만 더 넓게 */
 .hero-names{font-family:var(--pt);font-size:var(--s3);letter-spacing:.02em;
   color:var(--ink-strong);margin-top:40px}
 .cue{position:absolute;left:0;right:0;bottom:calc(env(safe-area-inset-bottom) + 30px);
@@ -275,11 +276,14 @@ body.no-photo .hero-photo{display:none}
 .copy-sm:active,.nav-btn:active,.picks-map:active{border-color:var(--ink);color:var(--ink)}
 .addr+.copy-sm{margin-top:8px}
 /* 예식장 — 지도·전경 사진을 옆으로 넘겨 봅니다 */
-.place-wrap{position:relative;margin:30px auto 0;--img-h:calc(78vw * .78)}
+.place-wrap{position:relative;margin:30px auto 0;
+  /* 사진 실제 높이 = (칼럼 폭 − 좌우여백) × 78%(카드 폭) × 80%(5:4 비율).
+     화살표가 사진과 정확히 같은 높이가 됩니다. */
+  --img-h:calc((min(100vw,430px) - 52px) * .624)}
 .places{display:flex;gap:var(--gap);overflow-x:auto;scrollbar-width:none;
   -webkit-overflow-scrolling:touch;scroll-behavior:auto;scroll-snap-type:x mandatory}
 .places::-webkit-scrollbar{display:none}
-.places>*{flex:0 0 78%;scroll-snap-align:center;aspect-ratio:1;
+.places>*{flex:0 0 78%;scroll-snap-align:center;aspect-ratio:5/4;
   border:1px solid var(--line);overflow:hidden;position:relative;display:block}
 .places img{width:100%;height:100%;object-fit:cover;display:block}
 .place-cap{position:absolute;left:0;right:0;bottom:0;padding:6px 10px;
@@ -307,8 +311,24 @@ body.no-photo .hero-photo{display:none}
 .spot-img{height:var(--img-h,240px);background:#EFEAE0;overflow:hidden;position:relative}
 .spot-img img{width:100%;height:100%;object-fit:cover}
 .spot-img .ph{position:absolute;inset:0;display:grid;place-items:center;
-  font-family:var(--sc);font-size:var(--s6);color:#C4C4C4;letter-spacing:.06em}
+  font-size:26px;opacity:.28;line-height:1}
 .spot-name{margin-top:12px;font-size:var(--s4);color:var(--ink-strong)}
+/* 평점 · 카테고리 · 소요시간 한 줄 */
+.spot-meta{margin-top:5px;font-size:11.5px;letter-spacing:.02em;
+  color:var(--ink-2);display:flex;align-items:center;justify-content:center;
+  gap:6px;flex-wrap:wrap}
+.spot-meta .st{color:var(--ink-strong);font-weight:700}
+.spot-meta .dot{opacity:.45}
+/* 카테고리 필터 탭 — 가로로 넘칠 때는 스크롤 */
+.pick-tabs{display:flex;gap:5px;overflow-x:auto;scrollbar-width:none;
+  width:100%;max-width:430px;margin:14px auto 0;padding:0 var(--pad);
+  box-sizing:border-box;scroll-behavior:smooth}
+.pick-tabs::-webkit-scrollbar{display:none}
+.pick-tab{flex:0 0 auto;border:1px solid var(--line);background:none;
+  color:var(--ink-2);font-family:inherit;font-size:var(--s6);letter-spacing:.02em;
+  padding:8px 13px;cursor:pointer;white-space:nowrap;line-height:1}
+.pick-tab[aria-selected="true"]{border-color:var(--ink-strong);color:var(--ink-strong);
+  font-weight:700}
 .spot-desc{margin-top:5px;font-size:var(--s6);line-height:1.6;color:var(--ink-2)}
 /* 화살표 — 사진 영역 위에 겹칩니다 */
 .spot-arw{position:absolute;top:0;width:56px;height:var(--img-h,100%);z-index:4;
@@ -547,6 +567,7 @@ body.no-photo .hero-photo{display:none}
   <div class="inner rise">
     <p class="intro" id="picksIntro"></p>
   </div>
+  <div class="pick-tabs" id="pickTabs" role="tablist"></div>
   <div class="spots-wrap rise">
     <div class="spots" id="spots"></div>
     <button class="spot-arw prev" type="button" id="spotPrev" aria-label="이전 장소">&#8249;</button>
@@ -654,8 +675,10 @@ const CONFIG = {
      사진을 추가하려면 img/ 에 넣고 아래 목록에 한 줄씩 더하세요. */
   venuePhotos:[
     { img:'img/venue1.jpg', cap:'오린하우스 전경' },
+    /* 아래 두 장은 잠시 빼둡니다. 쓰시려면 앞의 주석만 지우세요
     { img:'img/venue2.jpg', cap:'바다 앞 오린하우스' },
     { img:'img/venue3.jpg', cap:'식사' },
+    */
   ],
   naverMapScript:'',
   lat:null, lng:null, mapZoom:16,
@@ -676,42 +699,99 @@ const CONFIG = {
     intro:['와주시는 여러분께,',
            '저희가 좋아하는 장소들로',
            '작은 여행 가이드를 만들어 드립니다.'],
-    mapUrl:'https://www.google.com/maps/d/viewer?mid=13bKFNYmdtapEdl43gyG7mKmfyKdcIls',
+    /* 보내주신 링크는 /edit 이었습니다. 하객에게 편집 화면이 열리므로
+       /viewer 로 바꿔 넣었습니다. mid 값은 그대로입니다. */
+    mapUrl:'https://www.google.com/maps/d/viewer?mid=1Xuru6uc7tRBqWyDdEUJzhnkaK4pbDrY',
     mapLabel:'Save Our Picks!',
     dir:'img/picks/', ext:'.jpg',
+    /* 사진은 no 값으로 고정됩니다 (img/picks/01.jpg …).
+       필터를 걸어도 사진이 어긋나지 않도록 순번을 데이터에 직접 적어둡니다.
+       time = 오린하우스 기준 소요시간 · rating = 구글 평점 */
+    cats:[
+      { key:'all',   label:'전체' },
+      { key:'food',  label:'식당·해산물', icon:'\uD83E\uDD90' },
+      { key:'walk',  label:'산책·풍경', icon:'\uD83C\uDF0A' },
+      { key:'cafe',  label:'카페',      icon:'\u2615' },
+      { key:'bake',  label:'베이커리',  icon:'\uD83E\uDD50' },
+      { key:'arch',  label:'건축·디자인', icon:'\uD83C\uDFDB' },
+      { key:'hot',   label:'복합문화',  icon:'\u2728' },
+    ],
     spots:[
-      { cat:'Coffee', name:'Waveon Coffee',
-        desc:'기장을 대표하는 오션뷰 카페.\n바다를 바라보며 머물기 좋은 공간.' },
-      { cat:'Coffee', name:'모모스커피 (Momos Coffee)',
-        desc:'부산을 대표하는 스페셜티 커피 브랜드.\n커피를 좋아하는 분이라면 추천.' },
-      { cat:'Coffee', name:'그릿비 일광',
-        desc:'베이커리와 바다 전망으로 유명한 일광 카페.\n드라이브 코스로도 좋습니다.' },
-      { cat:'Coffee', name:'카페 숲 (SOOP)',
-        desc:'예식장과 가까운 학리의 조용한 오션뷰 카페.\n루프탑과 바다 전망이 좋습니다.' },
-      { cat:'Bakery', name:'칠암사계',
-        desc:'기장을 대표하는 베이커리.' },
-      { cat:'Bakery', name:'일광당',
-        desc:'오래된 찐빵·만두집.\n지역 주민들에게 꾸준히 사랑받는 곳입니다.' },
-      { cat:'Beach', name:'일광해수욕장',
-        desc:'예식장과 가장 가까운 해변.' },
-      { cat:'Beach', name:'임랑해수욕장',
-        desc:'조용하고 한적한 분위기.' },
-      { cat:'Spot', name:'죽성성당',
-        desc:'바다를 배경으로 사진 찍기 좋은 스팟.' },
-      { cat:'Spot', name:'죽성드림세트장',
-        desc:'바다를 배경으로 한 드라마 세트장.' },
-      { cat:'Spot', name:'해동용궁사',
-        desc:'바다 곁에 자리한 사찰.\n기장의 대표 명소입니다.' },
-      { cat:'Walk', name:'아난티 코브 산책',
-        desc:'바다를 따라 걷기 좋은 산책로.' },
-      { cat:'Market', name:'기장시장',
-        desc:'기장 대게로 이름난 전통시장.' },
-      { cat:'Restaurant', name:'기장 대게',
-        desc:'부산에 왔다면 한 번쯤.' },
-      { cat:'Restaurant', name:'아난티 코브 레스토랑',
-        desc:'분위기 있게 식사하기 좋습니다.' },
-      { cat:'Restaurant', name:'해산물 식당',
-        desc:'기장은 멸치회, 전복, 해산물도 유명합니다.' },
+      /* ── 산책 · 풍경 ─────────────────────────── */
+      { no:'01', c:'walk', name:'학리방파제', time:'도보 1분',
+        desc:'예식장 바로 앞 한적한 어항 산책로.\n빨간 등대가 서 있습니다.' },
+      { no:'02', c:'walk', name:'일광해수욕장', rating:'4.0', time:'차로 4분',
+        desc:'파도가 잔잔해 거닐기 좋은 백사장.\n곡선으로 길게 이어집니다.' },
+      { no:'03', c:'walk', name:'죽성드림세트장', rating:'4.2', time:'차로 8분',
+        desc:'바위 절벽 위 성당 외관의 포토존.\n바다를 배경으로 세워져 있습니다.' },
+      { no:'04', c:'walk', name:'오시리아 해안산책로', rating:'4.6', time:'차로 22분',
+        desc:'아난티·힐튼 앞 바다를 따라 걷는 길.\n해동용궁사까지 이어집니다.' },
+      { no:'05', c:'walk', name:'해동용궁사', rating:'4.5', time:'차로 25분',
+        desc:'바다 절벽 바로 위에 세워진 사찰.\n부산에 오셨다면 한 번쯤.' },
+      { no:'06', c:'walk', name:'광안리해수욕장', rating:'4.7', time:'차로 40분',
+        desc:'청춘의 바다이자 야경 명소.\n저녁에 특히 좋습니다.' },
+      { no:'07', c:'walk', name:'광안대교', rating:'4.6', time:'차로 40분',
+        desc:'부산을 대표하는 다리.\n밤에 불이 들어옵니다.' },
+      { no:'08', c:'walk', name:'흰여울문화마을', rating:'4.4', time:'차로 60분',
+        desc:'절벽 위 골목마다 바다가 보입니다.\n부산의 산토리니라 불립니다.' },
+      { no:'09', c:'walk', name:'용두산공원', rating:'4.3', time:'차로 55분',
+        desc:'부산타워에서 원도심을 360도로.\n부산역 가기 전 들르기 좋습니다.' },
+
+      /* ── 카페 ────────────────────────────────── */
+      { no:'10', c:'cafe', name:'카페 숲 (SOOP)', rating:'4.3', time:'도보 2분',
+        desc:'학리 포구 통창 오션뷰 카페.\n루프탑도 있습니다. (화요일 휴무)' },
+      { no:'11', c:'cafe', name:'스타벅스 기장임랑원점', rating:'4.5', time:'차로 15분',
+        desc:'넓은 잔디 정원과 바다가 만납니다.\n조형물이 놓여 있습니다.' },
+      { no:'12', c:'cafe', name:'웨이브온 커피', rating:'4.2', time:'차로 18분',
+        desc:'한국건축문화대상을 받은 건축미.\n파노라마 오션뷰. 주말엔 붐빕니다.' },
+      { no:'13', c:'cafe', name:'블루보틀 부산민락', rating:'4.5', time:'차로 38분',
+        desc:'수영강변 통창 프레임타워.\n건물 자체가 볼거리입니다.' },
+      { no:'14', c:'cafe', name:'타타에스프레소바', rating:'3.9', time:'차로 40분',
+        desc:'민락동 골목의 작은 빈티지 바.\n자리가 몇 개 없습니다.' },
+      { no:'15', c:'cafe', name:'모모스커피 영도점', rating:'4.5', time:'차로 55분',
+        desc:'옛 부두 창고를 고친 오픈 로스터리.\n커피를 좋아하신다면.' },
+      { no:'16', c:'cafe', name:'아티클 영도', time:'차로 55분',
+        desc:'절제된 미니멀 오션뷰 카페.\n영도 해안도로 위에 있습니다.' },
+
+      /* ── 베이커리 · 디저트 ───────────────────── */
+      { no:'17', c:'bake', name:'라이프라이크', rating:'4.1', time:'차로 10분',
+        desc:'제철 과일 케이크로 이름난 집.\n딸기 시즌엔 예약이 필요합니다.' },
+      { no:'18', c:'bake', name:'칠암사계', rating:'4.1', time:'차로 12분',
+        desc:'대한민국 명장의 빵집.\n소금빵이 유명합니다.' },
+      { no:'19', c:'bake', name:'삼진어묵 영도본점', rating:'4.3', time:'차로 55분',
+        desc:'대한민국 최초의 어묵 베이커리.\n선물용으로도 좋습니다.' },
+
+      /* ── 건축 · 디자인 ───────────────────────── */
+      { no:'20', c:'arch', name:'아난티 코브', rating:'4.6', time:'차로 20분',
+        desc:'해안 산책로와 서점 이터널저니.\n묵지 않아도 둘러볼 수 있습니다.' },
+      { no:'21', c:'arch', name:'빌라쥬 드 아난티', rating:'4.6', time:'차로 22분',
+        desc:'프라이빗한 모던 건축 단지.\n아난티 코브 바로 옆입니다.' },
+      { no:'22', c:'arch', name:'영화의전당', rating:'4.5', time:'차로 35분',
+        desc:'세계 최대 지붕 캔틸레버 건축물.\n10월엔 부산국제영화제가 열립니다.' },
+      { no:'23', c:'arch', name:'F1963', rating:'4.5', time:'차로 35분',
+        desc:'옛 와이어 공장을 고친 문화공간.\n서점과 대나무 정원이 있습니다.' },
+
+      /* ── 복합문화 ────────────────────────────── */
+      { no:'24', c:'hot', name:'밀락더마켓', rating:'4.2', time:'차로 40분',
+        desc:'광안대교가 보이는 스탠드형 공간.\n먹고 마시며 앉아 있기 좋습니다.' },
+      { no:'25', c:'hot', name:'러브이즈기빙', rating:'5.0', time:'차로 40분',
+        desc:'광안리의 소품·문구 숍.\n작은 선물 고르기 좋습니다.' },
+      { no:'26', c:'hot', name:'고릴라브루어리', time:'차로 40분',
+        desc:'인더스트리얼한 수제 맥주 펍.\n광안리 바다 앞입니다.' },
+      { no:'27', c:'hot', name:'무명일기', rating:'4.2', time:'차로 55분',
+        desc:'1950년대 조선소 창고를 고친 공간.\n천장이 아주 높습니다.' },
+      { no:'28', c:'hot', name:'피아크 (P.ARK)', rating:'4.2', time:'차로 55분',
+        desc:'배를 닮은 초대형 오션뷰 공간.\n베이커리와 전시가 함께 있습니다.' },
+      { no:'29', c:'hot', name:'해운대블루라인파크', rating:'4.5', time:'차로 30분',
+        desc:'해안선을 달리는 해변열차와 스카이캡슐.\n예매가 필요합니다.' },
+
+      /* ── 식당 · 해산물 ───────────────────────── */
+      { no:'30', c:'food', name:'해녀집', rating:'4.1', time:'도보 5분',
+        desc:'학리 포구의 정겨운 노포.\n싱싱한 해산물과 장어구이.' },
+      { no:'31', c:'food', name:'학리집', rating:'4.3', time:'도보 5분',
+        desc:'바다 옆 야외 테이블이 있습니다.\n해산물과 전복죽.' },
+      { no:'32', c:'food', name:'자갈치시장', rating:'4.0', time:'차로 55분',
+        desc:'부산 최대의 전통 수산시장.\n원도심의 활기가 그대로입니다.' },
     ],
   },
 
@@ -760,8 +840,17 @@ async function copy(text,msg){
   }
 }
 
-/* 0. 화면 높이 고정 — 인앱 툴바 접힘 대응 */
+/* 0. 화면 높이 — dvh 는 툴바가 접히면 같이 커집니다 */
 (function(){
+  /* dvh = 지금 실제로 보이는 높이. 툴바가 접히면 페이지도 같이 커져서
+     어느 상태에서든 내용이 화면 정중앙에 옵니다.
+     svh(툴바 보일 때 높이)로 고정하면 툴바가 접힌 뒤 148pt 가 남아
+     6~8번 페이지는 위로, 마지막 페이지는 아래로 쏠립니다.
+     ※ 흔들림이 느껴지면 아래 100dvh 를 100svh 로 되돌리시면 됩니다. */
+  if(CSS.supports && CSS.supports('height:100dvh')){
+    document.documentElement.style.setProperty('--vh','100dvh');
+    return;
+  }
   let base=0;
   const set=()=>{base=innerHeight;
     document.documentElement.style.setProperty('--vh',base+'px')};
@@ -932,36 +1021,64 @@ if(!CONFIG.doodles) document.body.classList.add('no-doodle');
   $('#picksMap').textContent = '\uD83D\uDCCD ' + P.mapLabel;
   $('#picksMap').href = P.mapUrl ||
     'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent('기장 '+CONFIG.venue);
-  $('#spots').innerHTML = P.spots.map((s,i)=>{
-    const no=String(i+1).padStart(2,'0');
+  /* 카테고리로 걸러 카드를 다시 그립니다.
+     사진 번호(no)는 데이터에 박혀 있어 필터를 바꿔도 어긋나지 않습니다. */
+  const CATS = P.cats || [{key:'all',label:'전체'}];
+  const iconOf = k => (CATS.find(c=>c.key===k)||{}).icon || '';
+  const labelOf = k => (CATS.find(c=>c.key===k)||{}).label || '';
+
+  const card = s => {
     const href = s.url || 'https://www.google.com/maps/search/?api=1&query='
-      + encodeURIComponent(s.name || ('부산 기장 '+s.cat));
+      + encodeURIComponent(s.name || '부산');
+    const meta = [
+      s.rating ? `<span class="st">\u2605 ${esc(s.rating)}</span>` : '',
+      `<span>${iconOf(s.c)} ${esc(labelOf(s.c))}</span>`,
+      s.time ? `<span>${esc(s.time)}</span>` : ''
+    ].filter(Boolean).join('<span class="dot">·</span>');
     return `<a class="spot" href="${href}" target="_blank" rel="noopener">
-      <div class="spot-img"><span class="ph">${no}</span>
-        <img src="${P.dir}${no}${P.ext}" alt="" loading="lazy" decoding="async"
+      <div class="spot-img"><span class="ph">${iconOf(s.c)||s.no}</span>
+        <img src="${P.dir}${s.no}${P.ext}" alt="" loading="lazy" decoding="async"
           onload="this.previousElementSibling.style.display='none'"
           onerror="this.style.display='none'"></div>
       <p class="spot-name">${esc(s.name||'장소 이름')}</p>
-      <p class="spot-desc">${s.desc?esc(s.desc).replace(/\n/g,'<br>'):'설명을 입력하세요'}</p>
+      <p class="spot-meta">${meta}</p>
+      <p class="spot-desc">${s.desc?esc(s.desc).replace(/\n/g,'<br>'):''}</p>
     </a>`;
-  }).join('');
+  };
+
+  const strip=$('#spots'), tabs=$('#pickTabs');
+  const prev=$('#spotPrev'), next=$('#spotNext');
+
+  const draw = key => {
+    const list = key==='all' ? P.spots : P.spots.filter(s=>s.c===key);
+    strip.innerHTML = list.map(card).join('');
+    strip.scrollLeft = 0;
+    update();
+  };
+
+  tabs.innerHTML = CATS.map((c,i)=>
+    `<button class="pick-tab" type="button" role="tab" data-key="${c.key}"
+      aria-selected="${i===0}">${c.icon?c.icon+' ':''}${esc(c.label)}</button>`).join('');
+  tabs.addEventListener('click', e=>{
+    const b=e.target.closest('.pick-tab'); if(!b) return;
+    tabs.querySelectorAll('.pick-tab').forEach(t=>
+      t.setAttribute('aria-selected', t===b ? 'true':'false'));
+    b.scrollIntoView({inline:'center',block:'nearest',behavior:'smooth'});
+    draw(b.dataset.key);
+  });
 
   /* 데스크톱은 마우스로 가로 스크롤이 어렵습니다 — 화살표로 넘깁니다 */
-  (function(){
-    const strip=$('#spots');
-    const prev=$('#spotPrev'), next=$('#spotNext');
-    const gp=parseFloat(getComputedStyle(strip).gap)||0;
-    const step=()=>{ const c=strip.children[0]; return c ? c.offsetWidth+gp : 0; };
-    const update=()=>{
-      prev.disabled = strip.scrollLeft < 4;
-      next.disabled = strip.scrollLeft > strip.scrollWidth-strip.clientWidth-4;
-    };
-    prev.addEventListener('click',()=>strip.scrollBy({left:-step(),behavior:'smooth'}));
-    next.addEventListener('click',()=>strip.scrollBy({left: step(),behavior:'smooth'}));
-    strip.addEventListener('scroll',update,{passive:true});
-    addEventListener('resize',update);
-    update();
-  })();
+  const gp=parseFloat(getComputedStyle(strip).gap)||0;
+  const step=()=>{ const c=strip.children[0]; return c ? c.offsetWidth+gp : 0; };
+  function update(){
+    prev.disabled = strip.scrollLeft < 4;
+    next.disabled = strip.scrollLeft > strip.scrollWidth-strip.clientWidth-4;
+  }
+  prev.addEventListener('click',()=>strip.scrollBy({left:-step(),behavior:'smooth'}));
+  next.addEventListener('click',()=>strip.scrollBy({left: step(),behavior:'smooth'}));
+  strip.addEventListener('scroll',update,{passive:true});
+  addEventListener('resize',update);
+  draw('all');
 
 })();
 
