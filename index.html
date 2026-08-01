@@ -16,18 +16,15 @@
 <meta property="og:url" content="https://popnp.github.io/wedding/">
 <meta name="theme-color" content="#ffffff">
 
-<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-<link rel="stylesheet" as="style" crossorigin
-  href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Edu+VIC+WA+NT+Beginner:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Syne:wght@600;700;800&display=swap">
 
 <style>
 :root{
   --ink:#444444;          /* 본문 — 종이 잉크 느낌. 대비 9.7:1 (AAA) */
   --ink-strong:#111111;   /* 제목 · 이름 등 강조 */
-  --ink-2:#8A8A8A; --line:#E4E4E4; --bg:#fff;
+  --ink-2:#8A8A8A; --line:#E0DACE; --bg:#F8F4EB;
   --pink:#FF2E7E; --blue:#1B35C4; --yellow:#E9A900; --green:#00874A;
   --accent:#111111;
   /* ★ 키컬러 — 미정. 정해지면 이 한 줄만 바꾸면 달력 전체가 따라갑니다 */
@@ -42,13 +39,24 @@
   --hp-x:-5%;      --hp-y:13%;      --hp-w:26%;     /* 3번 티켓 */
   --pad:26px;
   --gap:4px;              /* 사진 사이 간격 — 지도·여행가이드·갤러리 공통 */
-  --display:'Edu VIC WA NT Beginner',cursive;  /* 큰 영문 제목 */
+  --display:'Syne',sans-serif;            /* 영문 — Bold, 자간 -0.09em */
   /* 한글 · 작은 라벨 · 숫자 전부 Pretendard */
-  --pt:'Pretendard Variable','Pretendard',-apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+  --pt:'Gowun Batang',serif;              /* 한글 — Regular */
   --mj:var(--pt);  --sc:var(--pt);  --serif:var(--pt);  --serif-d:var(--pt);
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-snap-type:y proximity;scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+/* 데스크톱 — 폰 폭(430px) 그대로면 너무 작아 보입니다.
+   조판을 다시 짜지 않고 화면 전체를 확대해 비율을 그대로 유지합니다.
+   확대만큼 페이지 높이도 늘려야 스냅과 스크롤이 어긋나지 않습니다. */
+@media (min-width:700px){
+  body{zoom:1.35}
+  .page{min-height:calc(var(--vh,100dvh) / 1.35)}
+}
+@media (min-width:1100px){
+  body{zoom:1.6}
+  .page{min-height:calc(var(--vh,100dvh) / 1.6)}
+}
 body{background:var(--bg);color:var(--ink);font-family:var(--mj);
   font-size:16px;line-height:1.95;-webkit-font-smoothing:antialiased;overflow-x:hidden}
 img{display:block;max-width:100%}
@@ -113,10 +121,11 @@ body.no-photo .hero-photo{display:none}
 }
 .page-hero{max-height:var(--vh,100dvh);overflow:hidden}   /* 첫 화면은 항상 한 화면 */
 .page-hero .inner{padding-left:8px;padding-right:8px}    /* 제목이 폭을 다 쓰도록 */
+.big-line,.venue-nm,.hero-names,.family b,.spot-name{font-weight:700}
 .hero-title{font-family:var(--display);font-weight:400;color:var(--ink-strong);
-  font-size:clamp(50px,16.4vw,70px);line-height:1.16;letter-spacing:-.015em}
+  font-weight:700;font-size:clamp(44px,14.2vw,60px);line-height:1.1;letter-spacing:-.09em}
 .hero-title span{display:block}
-.hero-sub{font-family:var(--display);font-size:24px;letter-spacing:.01em;
+.hero-sub{font-family:var(--display);font-weight:700;font-size:19px;letter-spacing:-.05em;
   color:var(--ink-strong);margin-top:16px}
 .cue{position:absolute;left:0;right:0;bottom:calc(env(safe-area-inset-bottom) + 30px);
   z-index:2;display:flex;flex-direction:column;align-items:center;gap:12px}
@@ -156,7 +165,7 @@ body.no-photo .hero-photo{display:none}
 .btn{display:flex;align-items:center;justify-content:center;width:100%;height:52px;
   border:1px solid var(--line);background:var(--bg);font-size:14.5px;text-align:center;
   transition:border-color .2s,background .2s}
-.btn:active{background:#FAFAFA;border-color:var(--ink)}
+.btn:active{background:#F2ECE0;border-color:var(--ink)}
 
 /* ═══ 보딩패스 카드 ═══════════════════════════════════════ */
 .ticket{position:relative;display:flex;border:1px solid var(--ink);background:var(--bg);text-align:center}
@@ -212,7 +221,7 @@ body.no-photo .hero-photo{display:none}
 .cal-grid .d.hl i{color:var(--key)}
 /* 예식일 — 솔리드 원 없이 숫자만 3배 크게 핑크로 */
 .cal-grid .d em{position:relative;z-index:3;top:3px;font-style:normal;
-  font-family:var(--display);font-size:13.5px;letter-spacing:.01em;line-height:1.15;
+  font-family:var(--display);font-weight:700;font-size:11px;letter-spacing:-.04em;line-height:1.15;
   white-space:nowrap;                  /* 셀보다 넓으므로 좌우로 넘칩니다 */
   color:var(--key)}
 .cal-grid .d.mark i{font-family:var(--pt);font-weight:700;color:var(--key);
@@ -222,7 +231,7 @@ body.no-photo .hero-photo{display:none}
   width:40px;height:40px;transform:translate(-50%,-50%);
   background:var(--key);opacity:.18;border-radius:50%;z-index:1}
 .cal-note{font-size:13px;color:var(--ink-2);margin-top:22px;line-height:1.8}
-.cd{display:flex;align-items:baseline;justify-content:center;gap:20px;margin-top:26px}
+.cd{display:flex;align-items:baseline;justify-content:center;gap:20px;margin-top:52px}
 .cd div{display:flex;flex-direction:column;align-items:center;gap:5px}
 .cd small{font-size:9.5px;letter-spacing:.14em;color:var(--ink-2)}
 .cd b{font-family:var(--pt);font-weight:600;font-size:24px;line-height:1;
@@ -246,7 +255,7 @@ body.no-photo .hero-photo{display:none}
 .place-ph img{width:100%;height:100%;object-fit:cover;display:block}
 /* 지도는 사진이 정한 높이를 그대로 채웁니다 — 가로가 넓어집니다 */
 .map{height:100%;border:1px solid var(--line);
-  overflow:hidden;background:#F6F6F4;position:relative}
+  overflow:hidden;background:#EFEAE0;position:relative}
 .map img,.map iframe{width:100%;height:100%;object-fit:cover;display:block}
 .map img,.map a{display:block;width:100%;height:100%}
 .map img{object-fit:cover}
@@ -265,7 +274,7 @@ body.no-photo .hero-photo{display:none}
   scroll-behavior:auto;scroll-snap-type:x mandatory}
 .spots::-webkit-scrollbar{display:none}
 .spot{flex:0 0 74%;scroll-snap-align:center;display:block}
-.spot-img{height:var(--img-h,240px);background:#F4F4F4;overflow:hidden;position:relative}
+.spot-img{height:var(--img-h,240px);background:#EFEAE0;overflow:hidden;position:relative}
 .spot-img img{width:100%;height:100%;object-fit:cover}
 .spot-img .ph{position:absolute;inset:0;display:grid;place-items:center;
   font-family:var(--serif);font-size:13px;color:#C4C4C4;letter-spacing:.06em}
@@ -276,7 +285,7 @@ body.no-photo .hero-photo{display:none}
   display:flex;align-items:center;justify-content:center;
   border:0;background:none;color:var(--ink-strong);
   font-size:90px;line-height:1;padding:0;
-  text-shadow:0 0 14px #fff,0 0 6px #fff;transition:opacity .2s}
+  text-shadow:0 0 14px var(--bg),0 0 6px var(--bg);transition:opacity .2s}
 .spot-arw.prev{left:0}
 .spot-arw.next{right:0}
 .spot-arw:disabled{opacity:.2}
@@ -288,7 +297,7 @@ body.no-photo .hero-photo{display:none}
   -webkit-overflow-scrolling:touch;padding:0 var(--pad);
   scroll-behavior:auto}   /* ★ html 의 smooth 상속을 끊어야 rAF 이동이 먹습니다 */
 .strip::-webkit-scrollbar{display:none}
-.strip>div{flex:0 0 63%;aspect-ratio:3/4;position:relative;overflow:hidden;background:#F4F4F4}
+.strip>div{flex:0 0 63%;aspect-ratio:3/4;position:relative;overflow:hidden;background:#EFEAE0}
 .strip img{width:100%;height:100%;object-fit:cover}
 .strip .ph{position:absolute;inset:0;display:grid;place-items:center;
   font-family:var(--serif);font-size:12px;color:#B4B4B4;letter-spacing:.06em}
@@ -314,7 +323,7 @@ body.no-photo .hero-photo{display:none}
 .end-sea img{width:100%;height:auto;display:block;transform-origin:50% 50%;
   --r1:1.5deg; --r2:-1deg; --r3:.5deg; --tx:-1px; --ty:1px; --dur:1.55s;
   animation:boil var(--dur) linear infinite}
-.end-line{font-family:var(--display);font-size:25px;line-height:1.55;letter-spacing:0;color:var(--ink-strong)}
+.end-line{font-family:var(--display);font-weight:700;font-size:23px;line-height:1.4;letter-spacing:-.07em;letter-spacing:0;color:var(--ink-strong)}
 
 .toast{position:fixed;left:50%;bottom:calc(34px + env(safe-area-inset-bottom));
   transform:translate(-50%,14px);z-index:130;background:var(--ink);color:#fff;
@@ -398,7 +407,7 @@ body.no-photo .hero-photo{display:none}
   <span class="doodle" style="left:-30px;top:64px;width:118px;--r1:2deg;--r2:-1deg;--r3:3deg;--dur:1.7s;animation-delay:.4s"><svg><use href="#d5"></use></svg></span>
   <div class="stage">
     <span class="hero-photo"><img id="heroPhoto" alt="" fetchpriority="high"
-      src="img/hero.jpg"></span>
+      src="img/hero.png"></span>
     <span class="hero-plane"><img alt="" loading="lazy"
       src="img/plane.png"></span>
   </div>
