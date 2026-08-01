@@ -132,9 +132,12 @@ body.no-photo .hero-photo{display:none}
 .hero-title{font-family:var(--display);font-weight:400;color:var(--ink-strong);
   font-weight:700;font-size:clamp(44px,14.2vw,60px);line-height:1.1;letter-spacing:-.09em}
 .hero-title span{display:block}
-.hero-sub{font-family:var(--pt);font-weight:400;font-size:var(--s3);
+.hero-sub{font-family:var(--pt);font-weight:400;font-size:clamp(13px,3.7vw,16px);
   letter-spacing:.04em;word-spacing:0;       /* 덩어리 구분은 EM SPACE 가 담당합니다 */
-  color:var(--ink-strong);margin-top:18px}
+  white-space:nowrap;                        /* 한 줄 유지 */
+  color:var(--ink-strong)}
+.hero-top{position:absolute;left:0;right:0;z-index:2;
+  top:calc(env(safe-area-inset-top) + 46px)}   /* 화면 상단 고정 */
 .hero-names{font-family:var(--pt);font-size:var(--s3);letter-spacing:.02em;
   color:var(--ink-strong);margin-top:40px}
 .cue{position:absolute;left:0;right:0;bottom:calc(env(safe-area-inset-bottom) + 30px);
@@ -170,7 +173,6 @@ body.no-photo .hero-photo{display:none}
 .sub{font-size:var(--s6);line-height:1.75;color:var(--ink-2);margin-top:3px}
 .sub+.sub{margin-top:6px}
 .sub.gap{margin-top:20px}
-.sub.first{margin-top:52px}
 
 .btns{display:flex;flex-direction:column;gap:8px;margin-top:18px}
 .btn{display:flex;align-items:center;justify-content:center;width:100%;height:52px;
@@ -211,8 +213,16 @@ body.no-photo .hero-photo{display:none}
 /* ═══ 달력 (1~2주차만) ════════════════════════════════════ */
 .big-line,.venue-nm{font-family:var(--pt);font-weight:700;font-size:var(--s2);color:var(--ink-strong);
   letter-spacing:-.02em;line-height:1.32}
-#calD{margin-bottom:0}
-#calT{margin-bottom:34px}
+/* 두 줄을 좌우로 살짝 어긋나게 배치합니다 */
+/* 어긋남은 화면 폭에 비례 — 작은 폰에서 글자가 잘리지 않게 min() 으로 잠급니다 */
+/* 어긋남 60px. 좁은 화면에서는 글자가 잘리지 않는 만큼만 밀립니다 */
+#calD{margin-bottom:0;transform:translateX(calc(min(60px, 5vw) * -1))}
+#calT{margin-bottom:10px;transform:translateX(min(60px, 5vw))}
+.time-note{text-align:right;margin-bottom:52px}   /* 달력↔카운트다운(52px)과 동일 */
+@media (min-width:700px){                  /* 데스크톱은 여유가 있어 그대로 60px */
+  #calD{transform:translateX(-60px)}
+  #calT{transform:translateX(60px)}
+}
 .cal-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr))}
 /* 1fr 은 내용이 넓으면 칸을 늘립니다. minmax(0,1fr) 로 고정해야
    OUR WEDDING 만 좌우로 넘치고 칸 폭은 그대로 유지됩니다. */
@@ -422,9 +432,9 @@ body.no-photo .hero-photo{display:none}
     <span class="hero-plane"><img alt="" loading="lazy"
       src="img/plane.png"></span>
   </div>
+  <div class="inner hero-top"><p class="hero-sub">{{heroDate}}</p></div>
   <div class="inner">
     <h1 class="hero-title"><span>Trip to</span> <span>Our Wedding</span></h1>
-    <p class="hero-sub">{{heroDate}}</p>
     <p class="hero-names">{{groomFirst}} &amp; {{brideFirst}}</p>
   </div>
   <div class="cue"><span>Scroll or Tap</span><span class="scroll-line"></span></div>
@@ -487,6 +497,7 @@ body.no-photo .hero-photo{display:none}
   <div class="inner rise">
     <p class="big-line" id="calD">—</p>
     <p class="big-line" id="calT">—</p>
+    <p class="sub time-note">{{timeNote}}</p>
     <div class="cal-grid" id="calGrid"></div>
     <p class="cal-note" id="calNote"></p>
     <div class="cd" id="cd">
@@ -496,7 +507,6 @@ body.no-photo .hero-photo{display:none}
       <div><small>SEC</small><b id="cdS">—</b></div>
     </div>
     <p class="cd-note" id="cdNote"></p>
-    <p class="sub first">{{timeNote}}</p>
   </div>
 </section>
 
@@ -579,7 +589,8 @@ const CONFIG = {
 
   datetime:'2026-10-03T11:30:00+09:00',
   dateDisplay:'2026.10.03 SAT',
-  heroDate:'2026. 10. 3\u2003\u2003\u2003SAT\u2003\u2003\u200311:30',   /* \u2003 = 넓은 공백 */
+  heroDate:'2026. 10. 3\u2003\u200311:30\u2003\u2003ORIN HOUSE, BUSAN',   /* \u2003 = 넓은 공백 */
+  /* 헤더가 길어 작은 폰에서 줄바꿈될 수 있습니다. 짧게 쓰려면 위 값을 줄이세요 */
   boarding:'11:00 AM', ceremony:'11:30 AM', closing:'2:00 PM',
   timeNote:'11:00 AM 부터 입장 · 2:00 PM 까지 식사',
 
