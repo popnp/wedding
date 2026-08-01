@@ -21,7 +21,7 @@
   href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Permanent+Marker&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Edu+VIC+WA+NT+Beginner:wght@400;500&display=swap">
 
 <style>
 :root{
@@ -37,11 +37,12 @@
      430px 칼럼 기준. 숫자만 바꾸면 위치·크기가 움직입니다.
      x 는 사진=오른쪽 기준 / 비행기=왼쪽 기준, y 는 위쪽 기준.   */
   --photo-x:-1%;   --photo-y:16%;   --photo-w:32%;
-  --plane-x:-15%;  --plane-y:62%;   --plane-w:52%;
+  --plane-x:-3%;   --plane-y:70%;   --plane-w:34%;
   --sea-x:-7%;     --sea-y:8%;      --sea-w:38%;    /* 2번 인사말 */
   --hp-x:-5%;      --hp-y:13%;      --hp-w:26%;     /* 3번 티켓 */
   --pad:26px;
-  --display:'Permanent Marker',cursive;   /* 큰 영문 제목 — 유일한 예외 */
+  --gap:4px;              /* 사진 사이 간격 — 지도·여행가이드·갤러리 공통 */
+  --display:'Edu VIC WA NT Beginner',cursive;  /* 큰 영문 제목 */
   /* 한글 · 작은 라벨 · 숫자 전부 Pretendard */
   --pt:'Pretendard Variable','Pretendard',-apple-system,BlinkMacSystemFont,system-ui,sans-serif;
   --mj:var(--pt);  --sc:var(--pt);  --serif:var(--pt);  --serif-d:var(--pt);
@@ -110,11 +111,12 @@ body.no-photo .hero-photo{display:none}
 @media (prefers-reduced-motion:reduce){
   .hero-photo img,.hero-plane img,.inv-sea img,.tk-hp img,.end-sea img{animation:none;transform:rotate(var(--r1))}
 }
-.page-hero .inner{padding-left:16px;padding-right:16px}   /* 제목이 폭을 다 쓰도록 */
+.page-hero{max-height:var(--vh,100dvh);overflow:hidden}   /* 첫 화면은 항상 한 화면 */
+.page-hero .inner{padding-left:8px;padding-right:8px}    /* 제목이 폭을 다 쓰도록 */
 .hero-title{font-family:var(--display);font-weight:400;color:var(--ink-strong);
-  font-size:clamp(44px,14vw,60px);line-height:1.14;letter-spacing:-.01em}
+  font-size:clamp(50px,16.4vw,70px);line-height:1.16;letter-spacing:-.015em}
 .hero-title span{display:block}
-.hero-sub{font-family:var(--display);font-size:21px;letter-spacing:.01em;
+.hero-sub{font-family:var(--display);font-size:24px;letter-spacing:.01em;
   color:var(--ink-strong);margin-top:16px}
 .cue{position:absolute;left:0;right:0;bottom:calc(env(safe-area-inset-bottom) + 30px);
   z-index:2;display:flex;flex-direction:column;align-items:center;gap:12px}
@@ -132,10 +134,13 @@ body.no-photo .hero-photo{display:none}
 .intro p+p{margin-top:1.5em}
 .hairline{height:0;margin:50px auto}   /* 인사말 → 혼주 사이 100px */
 
-.family p{font-size:16px;line-height:1.6}
-.family p+p{margin-top:20px}
-.family span{display:block;font-size:15px;color:var(--ink-2);margin-top:4px}
-.family b{font-weight:700;color:var(--ink);font-size:17px}
+.family{display:grid;grid-template-columns:1fr 1fr;gap:0 14px;align-items:start}
+.family p{font-size:15px;line-height:1.55}
+.family span{display:block;font-size:14.5px;color:var(--ink-2);margin-top:5px}
+.family b{font-weight:700;color:var(--ink);font-size:16.5px}
+@media (max-width:340px){                 /* 아주 좁은 화면에서는 위아래로 */
+  .family{grid-template-columns:1fr;gap:20px 0}
+}
 
 .rows{border-top:1px solid var(--line)}
 .row{padding:15px 0;border-bottom:1px solid var(--line)}
@@ -207,27 +212,42 @@ body.no-photo .hero-photo{display:none}
 .cal-grid .d.hl i{color:var(--key)}
 /* 예식일 — 솔리드 원 없이 숫자만 3배 크게 핑크로 */
 .cal-grid .d em{position:relative;z-index:3;top:3px;font-style:normal;
-  font-family:var(--display);font-size:14.3px;letter-spacing:.03em;line-height:1.15;
+  font-family:var(--display);font-size:13.5px;letter-spacing:.01em;line-height:1.15;
   white-space:nowrap;                  /* 셀보다 넓으므로 좌우로 넘칩니다 */
-  text-transform:uppercase;color:var(--key)}
-.cal-grid .d.mark i{font-family:var(--display);color:var(--key);font-size:40px;line-height:.9}
+  color:var(--key)}
+.cal-grid .d.mark i{font-family:var(--pt);font-weight:700;color:var(--key);
+  font-size:19px;line-height:1;letter-spacing:-.02em}
+/* 예식일 — 연한 키컬러 원 */
+.cal-grid .d.mark::after{content:'';position:absolute;left:50%;top:50%;
+  width:40px;height:40px;transform:translate(-50%,-50%);
+  background:var(--key);opacity:.18;border-radius:50%;z-index:1}
 .cal-note{font-size:13px;color:var(--ink-2);margin-top:22px;line-height:1.8}
+.cd{display:flex;align-items:baseline;justify-content:center;gap:20px;margin-top:26px}
+.cd div{display:flex;flex-direction:column;align-items:center;gap:5px}
+.cd small{font-size:9.5px;letter-spacing:.14em;color:var(--ink-2)}
+.cd b{font-family:var(--pt);font-weight:600;font-size:24px;line-height:1;
+  letter-spacing:-.01em;color:var(--ink-strong);font-variant-numeric:tabular-nums}
+.cd-note{margin-top:16px;font-size:14px;color:var(--ink-2)}
+.cd-note em{font-style:normal;color:var(--key)}
 
 /* ═══ DESTINATION ═════════════════════════════════════════ */
 .addr{margin-top:9px;font-size:14.5px;color:var(--ink-2)}
-/* 복사 · 내비 버튼 — 네 개 모두 같은 상자 */
-.copy-sm,.nav-btn{display:inline-flex;align-items:center;justify-content:center;
+/* 복사 · 내비 · 구글맵 — 같은 상자 */
+.copy-sm,.nav-btn,.picks-map{display:inline-flex;align-items:center;justify-content:center;
   min-height:26px;padding:0 10px;border:1px solid var(--line);background:var(--bg);
   color:var(--ink-2);line-height:1;transition:border-color .2s,color .2s}
 .copy-sm{font-family:var(--sc);font-size:9.5px;font-weight:500;letter-spacing:.14em;
   text-transform:uppercase}
-.copy-sm:active,.nav-btn:active{border-color:var(--ink);color:var(--ink)}
+.copy-sm:active,.nav-btn:active,.picks-map:active{border-color:var(--ink);color:var(--ink)}
 .addr+.copy-sm{margin-top:8px}
-.place{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:30px}
-.place-ph{display:block;aspect-ratio:1;overflow:hidden;border:1px solid var(--line)}
+.place{display:grid;grid-template-columns:35fr 65fr;gap:var(--gap);margin-top:30px;
+  height:clamp(140px,21vh,180px)}   /* 높이 고정 — 숫자만 바꾸면 조절됩니다 */
+.place-ph{display:block;height:100%;overflow:hidden;border:1px solid var(--line)}
 .place-ph img{width:100%;height:100%;object-fit:cover;display:block}
-.map{aspect-ratio:1;border:1px solid var(--line);
+/* 지도는 사진이 정한 높이를 그대로 채웁니다 — 가로가 넓어집니다 */
+.map{height:100%;border:1px solid var(--line);
   overflow:hidden;background:#F6F6F4;position:relative}
+.map img,.map iframe{width:100%;height:100%;object-fit:cover;display:block}
 .map img,.map a{display:block;width:100%;height:100%}
 .map img{object-fit:cover}
 .map.empty{display:grid;place-items:center;font-family:var(--serif);
@@ -238,32 +258,33 @@ body.no-photo .hero-photo{display:none}
 .park2{margin-top:20px;font-size:14.5px;line-height:1.8;color:var(--ink-2)}
 
 /* ═══ PICKS ═══════════════════════════════════════════════ */
-.spots-wrap{width:100%;max-width:430px;margin:8px auto 0;position:relative;z-index:2}
-.spots{display:flex;gap:12px;overflow-x:auto;scrollbar-width:none;
+.spots-wrap{width:100%;max-width:430px;margin:8px auto 0;position:relative;z-index:2;
+  --img-h:clamp(150px,30vh,240px)}   /* 화면 높이에 맞춰 사진이 줄어듭니다 */
+.spots{display:flex;gap:var(--gap);overflow-x:auto;scrollbar-width:none;
   -webkit-overflow-scrolling:touch;padding:0 var(--pad);
   scroll-behavior:auto;scroll-snap-type:x mandatory}
 .spots::-webkit-scrollbar{display:none}
 .spot{flex:0 0 74%;scroll-snap-align:center;display:block}
-.spot-img{aspect-ratio:4/3;background:#F4F4F4;overflow:hidden;position:relative}
+.spot-img{height:var(--img-h,240px);background:#F4F4F4;overflow:hidden;position:relative}
 .spot-img img{width:100%;height:100%;object-fit:cover}
 .spot-img .ph{position:absolute;inset:0;display:grid;place-items:center;
   font-family:var(--serif);font-size:13px;color:#C4C4C4;letter-spacing:.06em}
-.spot-name{margin-top:14px;font-size:16px;color:var(--ink-strong)}
-.spot-desc{margin-top:6px;font-size:13px;line-height:1.7;color:var(--ink-2)}
-.spot-nav{display:flex;align-items:center;justify-content:center;gap:18px;
-  margin-top:20px;padding:0 var(--pad)}
-.spot-nav button{width:34px;height:34px;border:1px solid var(--line);background:var(--bg);
-  color:var(--ink-2);font-size:14px;line-height:1;
+.spot-name{margin-top:12px;font-size:15.5px;color:var(--ink-strong)}
+.spot-desc{margin-top:5px;font-size:12.5px;line-height:1.6;color:var(--ink-2)}
+/* 화살표 — 사진 영역 위에 겹칩니다 */
+.spot-arw{position:absolute;top:0;width:56px;height:var(--img-h,240px);z-index:4;
   display:flex;align-items:center;justify-content:center;
-  transition:border-color .2s,color .2s}
-.spot-nav button:active{border-color:var(--ink);color:var(--ink)}
-.spot-nav button:disabled{opacity:.3}
-.spot-nav span{font-size:12px;letter-spacing:.1em;color:var(--ink-2);min-width:56px;text-align:center}
-.picks-map{margin-top:30px}
+  border:0;background:none;color:var(--ink-strong);
+  font-size:90px;line-height:1;padding:0;
+  text-shadow:0 0 14px #fff,0 0 6px #fff;transition:opacity .2s}
+.spot-arw.prev{left:0}
+.spot-arw.next{right:0}
+.spot-arw:disabled{opacity:.2}
+.picks-map{margin-top:22px;font-size:12.5px;letter-spacing:.01em}
 
 /* ═══ MOMENTS — 우→좌 슬라이드 ════════════════════════════ */
 .strip-wrap{width:100%;max-width:430px;margin:0 auto;position:relative;z-index:2}
-.strip{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;
+.strip{display:flex;gap:var(--gap);overflow-x:auto;scrollbar-width:none;
   -webkit-overflow-scrolling:touch;padding:0 var(--pad);
   scroll-behavior:auto}   /* ★ html 의 smooth 상속을 끊어야 rAF 이동이 먹습니다 */
 .strip::-webkit-scrollbar{display:none}
@@ -293,7 +314,7 @@ body.no-photo .hero-photo{display:none}
 .end-sea img{width:100%;height:auto;display:block;transform-origin:50% 50%;
   --r1:1.5deg; --r2:-1deg; --r3:.5deg; --tx:-1px; --ty:1px; --dur:1.55s;
   animation:boil var(--dur) linear infinite}
-.end-line{font-family:var(--display);font-size:25px;line-height:1.5;letter-spacing:0;color:var(--ink-strong)}
+.end-line{font-family:var(--display);font-size:25px;line-height:1.55;letter-spacing:0;color:var(--ink-strong)}
 
 .toast{position:fixed;left:50%;bottom:calc(34px + env(safe-area-inset-bottom));
   transform:translate(-50%,14px);z-index:130;background:var(--ink);color:#fff;
@@ -447,6 +468,13 @@ body.no-photo .hero-photo{display:none}
     <p class="big-line" id="calT">—</p>
     <div class="cal-grid" id="calGrid"></div>
     <p class="cal-note" id="calNote"></p>
+    <div class="cd" id="cd">
+      <div><small>DAYS</small><b id="cdD">—</b></div>
+      <div><small>HOUR</small><b id="cdH">—</b></div>
+      <div><small>MIN</small><b id="cdM">—</b></div>
+      <div><small>SEC</small><b id="cdS">—</b></div>
+    </div>
+    <p class="cd-note" id="cdNote"></p>
     <p class="sub first">{{timeNote}}</p>
   </div>
 </section>
@@ -480,14 +508,11 @@ body.no-photo .hero-photo{display:none}
   </div>
   <div class="spots-wrap rise">
     <div class="spots" id="spots"></div>
-    <div class="spot-nav">
-      <button type="button" id="spotPrev" aria-label="이전 장소">&#8592;</button>
-      <span id="spotCount">01 / 16</span>
-      <button type="button" id="spotNext" aria-label="다음 장소">&#8594;</button>
-    </div>
+    <button class="spot-arw prev" type="button" id="spotPrev" aria-label="이전 장소">&#8249;</button>
+    <button class="spot-arw next" type="button" id="spotNext" aria-label="다음 장소">&#8250;</button>
   </div>
   <div class="inner rise">
-    <a class="btn picks-map" id="picksMap" target="_blank" rel="noopener"></a>
+    <a class="picks-map" id="picksMap" target="_blank" rel="noopener"></a>
   </div>
 </section>
 
@@ -603,7 +628,7 @@ const CONFIG = {
            '저희가 좋아하는 장소들로',
            '작은 여행 가이드를 만들어 드립니다.'],
     mapUrl:'https://www.google.com/maps/d/viewer?mid=13bKFNYmdtapEdl43gyG7mKmfyKdcIls',
-    mapLabel:'Open Curated Google Map',
+    mapLabel:'Save Our Picks!',
     dir:'img/picks/', ext:'.jpg',
     spots:[
       { cat:'Coffee', name:'Waveon Coffee',
@@ -727,6 +752,26 @@ const WD=(function(){
   if(el) el.textContent = n>0?'D-'+n : n===0?'Today':'D+'+(-n);
 })();
 
+/* 2b. 카운트다운 — 예식까지 남은 시간 (한국 시간 기준) */
+(function(){
+  const el={d:$('#cdD'),h:$('#cdH'),m:$('#cdM'),s:$('#cdS'),n:$('#cdNote')};
+  if(!el.d) return;
+  const target = Date.UTC(WD.y, WD.m-1, WD.d, WD.h-9, WD.mi);   /* +09:00 → UTC */
+  const p=n=>String(Math.max(0,n)).padStart(2,'0');
+  const tick=()=>{
+    let sec = Math.floor((target - Date.now())/1000);
+    if(sec < 0) sec = 0;
+    const d=Math.floor(sec/86400), hh=Math.floor(sec%86400/3600),
+          mm=Math.floor(sec%3600/60), ss=sec%60;
+    el.d.textContent=p(d); el.h.textContent=p(hh);
+    el.m.textContent=p(mm); el.s.textContent=p(ss);
+    el.n.innerHTML = sec>0
+      ? `우리의 여행이 <em>${d}</em>일 남았습니다.`
+      : '우리의 여행이 시작되었습니다.';
+  };
+  tick(); setInterval(tick,1000);
+})();
+
 /* 3. 달력 — 지정한 주차까지만 / 연휴 배경은 줄바꿈을 넘어 이어짐 */
 (function(){
   const C=CONFIG.calendar;
@@ -828,13 +873,11 @@ if(!CONFIG.doodles) document.body.classList.add('no-doodle');
 
   /* 데스크톱은 마우스로 가로 스크롤이 어렵습니다 — 화살표로 넘깁니다 */
   (function(){
-    const strip=$('#spots'), cnt=$('#spotCount');
+    const strip=$('#spots');
     const prev=$('#spotPrev'), next=$('#spotNext');
-    const step=()=>{ const c=strip.children[0]; return c ? c.offsetWidth+12 : 0; };
-    const total=P.spots.length;
+    const gp=parseFloat(getComputedStyle(strip).gap)||0;
+    const step=()=>{ const c=strip.children[0]; return c ? c.offsetWidth+gp : 0; };
     const update=()=>{
-      const i=Math.round(strip.scrollLeft/step())+1;
-      cnt.textContent=String(Math.min(i,total)).padStart(2,'0')+' / '+String(total).padStart(2,'0');
       prev.disabled = strip.scrollLeft < 4;
       next.disabled = strip.scrollLeft > strip.scrollWidth-strip.clientWidth-4;
     };
@@ -939,7 +982,12 @@ document.addEventListener('click',e=>{
   document.addEventListener('click',e=>{
     if(e.target.closest('button,a,input,label,iframe,.strip,.spots,.acc,[data-copy]')) return;
     const pg=e.target.closest('.page'); if(!pg) return;
-    if(pg.offsetHeight > innerHeight + 24) return;     /* 긴 페이지는 직접 스크롤 */
+    /* 화면보다 긴 페이지는 끝까지 읽은 뒤에만 넘깁니다.
+       (전에는 아예 탭을 막아서 첫 화면이 안 넘어갔습니다) */
+    if(pg.offsetHeight > innerHeight + 24){
+      const r=pg.getBoundingClientRect();
+      if(r.bottom > innerHeight + 40) return;
+    }
     const i=pages.indexOf(pg);
     if(i>-1 && i<pages.length-1) go(i+1);
   });
