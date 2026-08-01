@@ -332,6 +332,7 @@ body.no-photo .hero-photo{display:none}
   padding:8px 13px;cursor:pointer;white-space:nowrap;line-height:1}
 .pick-tab[aria-selected="true"]{border-color:var(--ink-strong);color:var(--ink-strong);
   font-weight:700}
+.spot-arch{margin-top:4px;font-size:11px;color:var(--ink-strong)}
 .spot-desc{margin-top:5px;font-size:var(--s6);line-height:1.6;color:var(--ink-2)}
 /* 화살표 — 사진 영역 위에 겹칩니다 */
 .spot-arw{position:absolute;top:0;width:56px;height:var(--img-h,100%);z-index:4;
@@ -717,6 +718,7 @@ const CONFIG = {
     cats:[
       { key:'all',   label:'전체' },
       { key:'food',  label:'식당·해산물', icon:'\uD83E\uDD90' },
+      { key:'event', label:'이벤트',    icon:'\uD83C\uDF86' },
       { key:'walk',  label:'산책·풍경', icon:'\uD83C\uDF0A' },
       { key:'cafe',  label:'카페',      icon:'\u2615' },
       { key:'bake',  label:'베이커리',  icon:'\uD83E\uDD50' },
@@ -745,27 +747,41 @@ const CONFIG = {
       { no:'12', c:'cafe', name:'웨이브온 커피', rating:'4.2', time:'차로 18분',
         desc:'한국건축문화대상을 받은 건축미.\n파노라마 오션뷰. 주말엔 붐빕니다.' },
       { no:'20', c:'arch', name:'아난티 코브', rating:'4.6', time:'차로 20분',
-        desc:'해안 산책로와 서점 이터널저니.\n묵지 않아도 둘러볼 수 있습니다.' },
+        arch:'민성진 · SKM건축사사무소',
+        desc:'800m 해안을 따라 낮게 눕힌 매스.\n서점 이터널저니는 묵지 않아도 들어갑니다.' },
       { no:'04', c:'walk', name:'오시리아 해안산책로', rating:'4.6', time:'차로 22분',
         desc:'아난티·힐튼 앞 바다를 따라 걷는 길.\n해동용궁사까지 이어집니다.' },
       { no:'21', c:'arch', name:'빌라쥬 드 아난티', rating:'4.6', time:'차로 22분',
-        desc:'프라이빗한 모던 건축 단지.\n아난티 코브 바로 옆입니다.' },
+        arch:'민성진 · SKM건축사사무소',
+        desc:'아난티 코브와 이어지는 마을형 단지.\n산책로로 함께 둘러보시면 됩니다.' },
       { no:'05', c:'walk', name:'해동용궁사', rating:'4.5', time:'차로 25분',
         desc:'바다 절벽 바로 위에 세워진 사찰.\n부산에 오셨다면 한 번쯤.' },
       { no:'29', c:'hot', name:'해운대블루라인파크', rating:'4.5', time:'차로 30분',
         desc:'해안선을 달리는 해변열차와 스카이캡슐.\n예매가 필요합니다.' },
 
       /* ── 식당 · 해산물 ───────────────────────── */
+      { no:'39', c:'food', name:'짱떡볶이', rating:'4.3', time:'차로 30분',
+        desc:'일요일 휴무! 떡볶이·어묵·튀김 7천원.\n해운대 골목 안에 숨어 있어요.' },
+      { no:'40', c:'food', name:'금수복국 해운대본점', rating:'4.2', time:'차로 30분',
+        desc:'24시간 하는 복국집. 미쉐린 빕구르망.\n해장에 이만한 곳이 없습니다.' },
       { no:'22', c:'arch', name:'영화의전당', rating:'4.5', time:'차로 35분',
-        desc:'세계 최대 지붕 캔틸레버 건축물.\n10월엔 부산국제영화제가 열립니다.' },
+        arch:'쿱 힘멜블라우 · 희림건축',
+        desc:'해체주의 건축. 세계 최대 지붕 캔틸레버.\n야외극장 조명이 켜지는 밤이 좋습니다.' },
+      { no:'33', c:'event', name:'부산국제영화제 · 영화의전당', time:'차로 35분',
+        url:'https://www.google.com/maps/search/?api=1&query=%EC%98%81%ED%99%94%EC%9D%98%EC%A0%84%EB%8B%B9',
+        desc:'10월 6일부터 15일까지 열립니다.\n예식 사흘 뒤에 시작해요.' },
       { no:'23', c:'arch', name:'F1963', rating:'4.5', time:'차로 35분',
-        desc:'옛 와이어 공장을 고친 문화공간.\n서점과 대나무 정원이 있습니다.' },
+        arch:'조병수건축연구소',
+        desc:'45년간 와이어를 뽑던 공장을 고쳤습니다.\n지붕을 잘라 만든 중정과 대나무 숲.' },
 
       /* ── 복합문화 ────────────────────────────── */
       { no:'13', c:'cafe', name:'블루보틀 부산민락', rating:'4.5', time:'차로 38분',
         desc:'수영강변 통창 프레임타워.\n건물 자체가 볼거리입니다.' },
       { no:'06', c:'walk', name:'광안리해수욕장', rating:'4.7', time:'차로 40분',
         desc:'청춘의 바다이자 야경 명소.\n저녁에 특히 좋습니다.' },
+      { no:'34', c:'event', name:'광안리 드론쇼', time:'차로 40분',
+        url:'https://www.google.com/maps/search/?api=1&query=%EA%B4%91%EC%95%88%EB%A6%AC%ED%95%B4%EC%88%98%EC%9A%95%EC%9E%A5',
+        desc:'매주 토요일 정기공연 — 예식 당일에도 합니다.\n12분간, 해변 어디서나 무료로 볼 수 있어요.' },
       { no:'07', c:'walk', name:'광안대교', rating:'4.6', time:'차로 40분',
         desc:'부산을 대표하는 다리.\n밤에 불이 들어옵니다.' },
       { no:'14', c:'cafe', name:'타타에스프레소바', rating:'3.9', time:'차로 40분',
@@ -776,28 +792,37 @@ const CONFIG = {
         desc:'광안리의 소품·문구 숍.\n작은 선물 고르기 좋습니다.' },
       { no:'26', c:'hot', name:'고릴라브루어리', time:'차로 40분',
         desc:'인더스트리얼한 수제 맥주 펍.\n광안리 바다 앞입니다.' },
+      { no:'41', c:'food', name:'오징어랑해물이랑', rating:'4.6', time:'차로 40분',
+        desc:'오후 4시에 열어요. 테이블 예닐곱 개뿐.\n광안리에서 회 가성비는 여기가 최고.' },
       { no:'09', c:'walk', name:'용두산공원', rating:'4.3', time:'차로 55분',
         desc:'부산타워에서 원도심을 360도로.\n부산역 가기 전 들르기 좋습니다.' },
 
       /* ── 카페 ────────────────────────────────── */
       { no:'15', c:'cafe', name:'모모스커피 영도점', rating:'4.5', time:'차로 55분',
         desc:'옛 부두 창고를 고친 오픈 로스터리.\n커피를 좋아하신다면.' },
-      { no:'16', c:'cafe', name:'아티클 영도', time:'차로 55분',
-        desc:'절제된 미니멀 오션뷰 카페.\n영도 해안도로 위에 있습니다.' },
-
-      /* ── 베이커리 · 디저트 ───────────────────── */
       { no:'19', c:'bake', name:'삼진어묵 영도본점', rating:'4.3', time:'차로 55분',
         desc:'대한민국 최초의 어묵 베이커리.\n선물용으로도 좋습니다.' },
 
       /* ── 건축 · 디자인 ───────────────────────── */
       { no:'27', c:'hot', name:'무명일기', rating:'4.2', time:'차로 55분',
         desc:'1950년대 조선소 창고를 고친 공간.\n천장이 아주 높습니다.' },
-      { no:'28', c:'hot', name:'피아크 (P.ARK)', rating:'4.2', time:'차로 55분',
-        desc:'배를 닮은 초대형 오션뷰 공간.\n베이커리와 전시가 함께 있습니다.' },
+      { no:'28', c:'arch', name:'피아크 (P.ARK)', rating:'4.2', time:'차로 55분',
+        desc:'조선소와 창고가 밀집했던 영도 해안의 재생.\n배를 닮은 매스, 바다로 열린 계단형 테라스.' },
+      { no:'38', c:'arch', name:'문화공감 수정 (구 정란각)', rating:'4.3', time:'차로 55분',
+        desc:'저희가 아끼는 곳. 일제강점기 목조 저택입니다.\n월요일 휴무 · 오후 5시에 닫아요.' },
+      { no:'42', c:'food', name:'백화양곱창', rating:'4.0', time:'차로 55분',
+        desc:'부평깡통시장 곱창골목. 숯불에 구워줍니다.\n낮 12시부터 자정까지.' },
       { no:'32', c:'food', name:'자갈치시장', rating:'4.0', time:'차로 55분',
         desc:'부산 최대의 전통 수산시장.\n원도심의 활기가 그대로입니다.' },
       { no:'08', c:'walk', name:'흰여울문화마을', rating:'4.4', time:'차로 60분',
         desc:'절벽 위 골목마다 바다가 보입니다.\n부산의 산토리니라 불립니다.' },
+      { no:'37', c:'arch', name:'아미동 비석문화마을', time:'차로 60분',
+        desc:'일제강점기 공동묘지의 비석을 축대로 다시 썼습니다.\n감천마을에서 걸어서 20분.' },
+      { no:'35', c:'event', name:'부산국제록페스티벌', time:'차로 60분',
+        url:'https://www.google.com/maps/search/?api=1&query=%EC%82%BC%EB%9D%BD%EC%83%9D%ED%83%9C%EA%B3%B5%EC%9B%90',
+        desc:'10월 2~4일 삼락생태공원. 예식 당일이 둘째 날!\n유료 공연이라 티켓을 미리 사셔야 합니다.' },
+      { no:'36', c:'arch', name:'감천문화마을', time:'차로 65분',
+        desc:'지형을 깎지 않고 계단식으로 앉힌 피란민 마을.\n등고선을 따라 난 길과 집의 배치를 보세요.' },
     ],
   },
 
@@ -1052,6 +1077,7 @@ if(!CONFIG.doodles) document.body.classList.add('no-doodle');
           onerror="this.style.display='none'"></div>
       <p class="spot-name">${esc(s.name||'장소 이름')}</p>
       <p class="spot-meta">${meta}</p>
+      ${s.arch?`<p class="spot-arch">${esc(s.arch)}</p>`:''}
       <p class="spot-desc">${s.desc?esc(s.desc).replace(/\n/g,'<br>'):''}</p>
     </a>`;
   };
