@@ -309,8 +309,8 @@ a{color:inherit;text-decoration:none}
 /* 전경 사진 — inner 를 벗어나 좌우 끝까지 갑니다.
    높이를 정해두어야 페이지가 화면보다 길어지지 않습니다.       */
 .venue-shot{width:100%;margin:26px 0 0;overflow:hidden}
-.venue-shot img{width:100%;height:clamp(190px,34vh,320px);
-  object-fit:cover;object-position:center center;display:block}
+.venue-shot img{width:100%;height:clamp(210px,40vh,380px);
+  object-fit:cover;object-position:center 62%;display:block}
 .park{margin-top:26px;font-size:var(--s5);line-height:1.8;color:var(--ink-2)}
 .park2{margin-top:24px;font-size:var(--s5);line-height:1.8;color:var(--ink-2)}
 
@@ -361,7 +361,7 @@ a{color:inherit;text-decoration:none}
 /* Save Our Picks! — 이 페이지에서 유일하게 눌러야 하는 것이라
    바탕색보다 한 단계 짙은 톤온톤으로 채우고 테두리를 둘렀습니다.
    색은 아래 두 줄(background · border)만 고치면 됩니다 */
-.picks-map{display:flex;width:100%;margin:39px auto 0;min-height:52px;
+.picks-map{display:flex;width:100%;margin:15px auto 0;min-height:52px;
   padding:14px 18px;border-radius:0;
   background:#EFE7D6;                    /* 크림(#F8F4EB) 보다 한 톤 짙게 */
   border:1px solid #DCD2BC;              /* 테두리는 배경보다 다시 한 톤 짙게 */
@@ -405,8 +405,8 @@ a{color:inherit;text-decoration:none}
    글이 화면보다 길면 페이지가 늘어나고 스크롤로 읽습니다. */
 .page-letter{justify-content:center;height:auto;min-height:var(--vh,100dvh);
   overflow:visible;
-  padding-top:calc(env(safe-area-inset-top) + 46px);
-  padding-bottom:calc(env(safe-area-inset-bottom) + 46px)}
+  padding-top:calc(env(safe-area-inset-top) + 30px);
+  padding-bottom:calc(env(safe-area-inset-bottom) + 30px)}
 .letter{width:100%;text-align:center;word-break:keep-all;
   font-family:var(--pt);font-size:12px;line-height:1.72;color:#222}
 /* 데스크톱은 화면이 넓어 글자가 작아 보입니다 — 한 단계 키웁니다 */
@@ -523,7 +523,7 @@ a{color:inherit;text-decoration:none}
   <!-- 전경 사진 — 좌우 여백 없이 화면 끝까지 -->
   <div class="venue-shot rise"><img id="venueShot" alt="{{venue}} 전경" loading="lazy"></div>
   <div class="inner rise">
-    <p class="park">{{outdoor}}<br>{{shoes}}</p>
+    <p class="park">{{outdoor}}<br>{{shoes}}<br>충분한 주차공간이 마련되어 있습니다.</p>
   </div>
 </section>
 
@@ -538,7 +538,6 @@ a{color:inherit;text-decoration:none}
       <a class="nav-btn" id="navNaver" target="_blank" rel="noopener">네이버지도</a>
     </div>
     <div class="venue-map" id="venueMap"></div>
-    <p class="park2">충분한 주차공간이 마련되어 있습니다.</p>
   </div>
 </section>
 
@@ -645,7 +644,7 @@ const CONFIG = {
                 '4 / 3' 이나 '5 / 4' 처럼 실제 파일에 맞춰 적어 주세요.
                 그림은 잘리지 않고 이 틀 안에 통째로 들어갑니다.      */
   /* 예식장 전경 사진 — 좌우 여백 없이 들어갑니다 */
-  venuePhoto:'img/venue1.jpg',
+  venuePhoto:'img/orinview.jpg',
 
   mapImage:'img/maporin.jpeg',
   mapRatio:'1 / 1',
@@ -1023,6 +1022,33 @@ function daysLeft(){
       flat.map(par).join('') +
       (L.sign?`<p class="l-sign">${esc(L.sign)}</p>`:'') +
     `</div>`;
+})();
+
+/* 3-3. 손편지 — 한 화면에 담기도록 글자 크기를 자동으로 맞춥니다.
+   기기마다 화면 높이가 달라 고정값으로는 맞출 수 없습니다.
+   기본 크기에서 시작해 페이지가 화면 안에 들어올 때까지 0.25px 씩 줄입니다.
+   (한 화면에 들어와야 탭으로 다음 장으로 넘어갑니다)               */
+(function(){
+  const pg=$('.page-letter'), el=$('#letter');
+  if(!pg || !el) return;
+  const MIN=9.5;                         /* 이보다 작아지지는 않습니다 */
+
+  const fit=()=>{
+    el.style.fontSize='';                /* CSS 기본값(폰 12px · 웹 14px)에서 시작 */
+    let size=parseFloat(getComputedStyle(el).fontSize);
+    let guard=0;
+    while(pg.getBoundingClientRect().height > innerHeight - 6
+          && size > MIN && guard++ < 60){
+      size -= 0.25;
+      el.style.fontSize = size.toFixed(2)+'px';
+    }
+  };
+
+  fit();
+  addEventListener('load', fit);
+  addEventListener('orientationchange', ()=>setTimeout(fit,320));
+  let t; addEventListener('resize', ()=>{ clearTimeout(t); t=setTimeout(fit,180); });
+  if(document.fonts && document.fonts.ready) document.fonts.ready.then(fit);
 })();
 
 /* 4. 지도 · Picks */
