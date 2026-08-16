@@ -590,6 +590,13 @@ body.no-photo .hero-photo{display:none}
   </div>
 </section>
 
+<!-- ══ LETTER ═══════════════════════════════════════════ -->
+<section class="page page-letter">
+  <div class="inner rise">
+    <div class="letter" id="letter"></div>
+  </div>
+</section>
+
 <!-- ══ WITH LOVE ════════════════════════════════════════ -->
 <section class="page">
   <span class="doodle" style="right:-40px;bottom:38px;width:138px;--r1:1deg;--r2:-3deg;--r3:2deg;--dur:1.5s"><svg><use href="#d1"></use></svg></span>
@@ -830,6 +837,42 @@ const CONFIG = {
      speed : 슬라이드 속도 (px/frame). 0 이면 자동이동 정지    */
   gallery:{ count:4, dir:'img/', ext:'.jpg', speed:0.35 },
 
+  /* ── 손편지 ─────────────────────────────────────────
+     q:true 로 표시한 줄은 왼쪽에 세로선이 붙는 인용입니다. */
+  letter:{
+    date:'2026년 8월, 일본에서',
+    /* 한 줄이 한 화면입니다. 탭하면 다음 묶음으로 넘어갑니다.
+       q:true 는 왼쪽 세로선이 붙는 혼잣말입니다. */
+    body:[
+      ['안녕하세요.',
+       '오늘도 퇴근 후 둘이 마주 앉아 결혼식 이야기를 했습니다.'],
+
+      ['결혼은 늘 어른들만 하는 일인 줄 알았습니다. 그런데 어느새 저희가 그 준비를 하고 있다는 것이 아직도 조금은 낯설고 신기합니다.',
+       '드레스를 고르고, 음악을 듣고, 식순을 정하는 것보다도 더 많은 시간을 보내는 일은, 사실 한 분 한 분의 얼굴을 떠올리는 일이었습니다.'],
+
+      [{q:'이분께는 어떻게 소식을 전하면 좋을까.'},
+       {q:'부산까지 오시라고 말씀드리는 것이 너무 큰 부탁은 아닐까.'},
+       '그 생각을 정말 많이 했습니다.'],
+
+      ['저희는 지금 일본에서 지내고 있어 직접 찾아뵙고 인사드리지 못했습니다. 그것이 내내 마음에 걸려, 대신 이렇게 긴 글을 적어 보냅니다.'],
+
+      ['식은 부산에서 올립니다. 제가 나고 자란 곳이기도 하고, 오래 도시에서 지내다 소담한 어촌의 푸른 바다에 그만 반해버렸거든요.',
+       '그 바다가 보이는 곳에서 시작하고 싶었습니다.'],
+
+      ['요즘 저희의 가장 큰 고민은 \u2018어떻게 하면 결혼식을 잘 치를까\u2019가 아니라, \u2018멀리까지 와주시는 분들이 조금이라도 편안하고 즐거운 시간을 보내실 수 있을까\u2019입니다.',
+       '부산의 계절을 떠올리며 커피 한 잔 마시기 좋은 곳을 찾아보고, 바다가 가장 예쁜 시간은 언제인지 이야기하고, 오시는 길은 어떻게 준비해 드리면 좋을지 하나씩 고민하고 있습니다.'],
+
+      ['결혼식을 위해 부산에 와주시는 것이 아니라, 부산으로 작은 여행을 떠나듯 함께 와주시면 좋겠습니다.',
+       '저희도 그 여행의 호스트가 되는 마음으로 여러분을 맞이하려고 합니다.'],
+
+      ['그날이 화려하게 기억되기보다, \u2018참 좋은 하루였다\u2019라는 기억으로 남는다면 저희는 그것으로 충분할 것 같습니다.',
+       '이 글을 읽고 계신 지금도, 저희는 아마 또 하나의 작은 결정을 하고 있을 것입니다. 식탁에 앉아 \u201c이게 더 우리답지 않을까?\u201d를 이야기하면서요.'],
+
+      ['새로운 계절을 시작하는 날, 함께해 주신다면 정말 큰 기쁨이겠습니다.',
+       '늘 건강하시고, 평안한 여름 보내시길 바랍니다.'],
+    ],
+    sign:'일형 드림',
+  },
   accounts:[
     { side:'신랑측', list:[
       { who:'신랑 백성준',      no:'110-498-887838', bank:'신한은행' },
@@ -994,6 +1037,43 @@ if(!CONFIG.doodles) document.body.classList.add('no-doodle');
   const el=$('#heroPhoto');
   if(CONFIG.heroImage) el.src=CONFIG.heroImage;
   el.style.opacity=CONFIG.heroOpacity;
+})();
+
+/* 3-2. 손편지 — 탭할 때마다 다음 묶음으로 */
+(function(){
+  const L=CONFIG.letter, el=$('#letter'); if(!L||!el) return;
+  const par=b => typeof b==='string' ? `<p>${esc(b)}</p>` : `<p class="q">${esc(b.q)}</p>`;
+
+  el.innerHTML =
+    `<p class="l-date">${esc(L.date||'')}</p>` +
+    `<div class="l-stack">` +
+      L.body.map((grp,i)=>
+        `<div class="l-leaf${i===0?' on':''}">${grp.map(par).join('')}` +
+        (i===L.body.length-1 && L.sign ? `<p class="l-sign">${esc(L.sign)}</p>`:'') +
+        `</div>`).join('') +
+    `</div>` +
+    `<div class="l-dots">${L.body.map((_,i)=>
+      `<i class="${i===0?'on':''}"></i>`).join('')}</div>`;
+
+  const leaves=$$('.l-leaf',el), dots=$$('.l-dots i',el);
+  let at=0;
+  /* 묶음마다 높이가 달라 화면이 들썩입니다 — 가장 긴 묶음에 높이를 고정합니다 */
+  const lock=()=>{ const st=$('.l-stack',el);
+    st.style.height='auto'; let h=0;
+    leaves.forEach(f=>{ const was=f.classList.contains('on');
+      f.classList.add('on'); h=Math.max(h,f.offsetHeight);
+      if(!was) f.classList.remove('on'); });
+    st.style.height=h+'px'; };
+  addEventListener('load',lock); addEventListener('resize',lock); lock();
+
+  /* 마지막 묶음이면 false — 페이저가 이어받아 다음 페이지로 넘어갑니다 */
+  el.closest('.page').__letterNext = () => {
+    if(at >= leaves.length-1) return false;
+    leaves[at].classList.remove('on'); dots[at].classList.remove('on');
+    at++;
+    leaves[at].classList.add('on'); dots[at].classList.add('on');
+    return true;
+  };
 })();
 
 /* 4. 지도 · Picks */
@@ -1216,11 +1296,16 @@ document.addEventListener('click',e=>{
       const r=pg.getBoundingClientRect();
       if(r.bottom > innerHeight + 40) return;
     }
+    /* 손편지는 페이지를 넘기기 전에 다음 문단부터 보여줍니다 */
+    if(typeof pg.__letterNext==='function' && pg.__letterNext()) return;
     const i=pages.indexOf(pg);
     if(i>-1 && i<pages.length-1) go(i+1);
   });
   addEventListener('keydown',e=>{
-    if(['Enter',' ','ArrowDown','PageDown'].includes(e.key)){ e.preventDefault(); go(cur()+1); }
+    if(['Enter',' ','ArrowDown','PageDown'].includes(e.key)){ e.preventDefault();
+      const pg=pages[cur()];
+      if(typeof pg.__letterNext==='function' && pg.__letterNext()) return;
+      go(cur()+1); }
     if(['ArrowUp','PageUp'].includes(e.key)){ e.preventDefault(); go(cur()-1); }
   });
   const upd=()=>{ const mx=document.documentElement.scrollHeight-innerHeight;
