@@ -320,6 +320,12 @@ a{color:inherit;text-decoration:none}
 /* 전경 사진 — inner 를 벗어나 좌우 끝까지 갑니다.
    높이를 정해두어야 페이지가 화면보다 길어지지 않습니다.       */
 .venue-shot{width:100%;margin:26px 0 0;overflow:hidden}
+/* 넓은 화면에서는 사진이 창을 가득 채우며 한없이 커집니다.
+   폰 화면 정도의 폭으로 묶어 가운데 놓습니다. */
+@media (min-width:640px){
+  .venue-shot{width:min(100%,560px);margin-left:auto;margin-right:auto}
+  .page-end .end-shot{width:min(100%,560px)}
+}
 /* 정사각형으로 잘라둔 사진이라 그대로 정사각형 자리에 들어갑니다.
    폰에서는 좌우 끝까지 꽉 차고 잘리는 곳이 없습니다.
    화면이 아주 낮은 기기에서만 위아래가 조금 잘립니다. */
@@ -395,6 +401,12 @@ a{color:inherit;text-decoration:none}
 .moment-frame{position:relative;width:100%;height:100%;overflow:hidden;background:#000}
 .moment-frame img{position:absolute;inset:0;width:100%;height:100%;max-width:none;
   object-fit:cover;object-position:center center}
+/* 가로로 긴 사진은 세로로 긴 폰 화면을 억지로 채우면 서너 배로 확대돼
+   가운데 한 조각만 남습니다. 그럴 때는 사진 전체를 보여주고
+   위아래를 크림색 여백으로 둡니다. (세로 사진은 지금처럼 꽉 찹니다) */
+.page-moment:has(.moment-frame.wide){background:var(--bg)}
+.moment-frame.wide{background:var(--bg)}
+.moment-frame.wide img{object-fit:contain}
 
 /* ═══ WITH LOVE ═══════════════════════════════════════════ */
 .acc-item+.acc-item{margin-top:4px}
@@ -578,13 +590,7 @@ a{color:inherit;text-decoration:none}
   </div>
 </section>
 
-<!-- ══ MOMENTS ══════════════════════════════════════════ -->
-<section class="page page-moment">
-  <div class="moment-frame"><img alt="" loading="lazy" decoding="async" src=""></div>
-</section>
-<section class="page page-moment">
-  <div class="moment-frame"><img alt="" loading="lazy" decoding="async" src=""></div>
-</section>
+<!-- ══ MOMENTS — 사진 · 편지 · 사진 · 사진 ═══════════════ -->
 <section class="page page-moment">
   <div class="moment-frame"><img alt="" loading="lazy" decoding="async" src=""></div>
 </section>
@@ -594,6 +600,13 @@ a{color:inherit;text-decoration:none}
   <div class="inner rise">
     <div class="letter" id="letter"></div>
   </div>
+</section>
+
+<section class="page page-moment">
+  <div class="moment-frame"><img alt="" loading="lazy" decoding="async" src=""></div>
+</section>
+<section class="page page-moment">
+  <div class="moment-frame"><img alt="" loading="lazy" decoding="async" src=""></div>
 </section>
 
 <!-- ══ WITH LOVE ════════════════════════════════════════ -->
@@ -857,9 +870,9 @@ const CONFIG = {
      ※ 사진을 더하거나 빼시려면 이 목록과 함께 본문의
        <section class="page page-moment"> 도 같은 수로 맞춰 주세요.   */
   moments:[
-    { img:'img/04.jpg', ratio:'2 / 3' },
+    { img:'img/04.jpg', ratio:'2 / 3' },   /* 편지 앞 */
+    { img:'img/06.jpg', ratio:'2 / 3' },   /* 편지 뒤 */
     { img:'img/05.jpg', ratio:'2 / 3' },
-    { img:'img/06.jpg', ratio:'2 / 3' },
   ],
 
   /* ── 손편지 ─────────────────────────────────────────
@@ -1267,6 +1280,16 @@ function daysLeft(){
     const M=list[i], frame=$('.moment-frame',pg), img=$('img',frame||pg);
     if(!M || !frame || !img){ pg.style.display='none'; return; }
     if(M.ratio) frame.style.setProperty('--moment-ratio', M.ratio);
+
+    /* 사진이 실제로 어떤 비율인지는 받아본 뒤에 알 수 있습니다.
+       CONFIG 에 안 적어두셨어도 여기서 알아서 잡습니다.          */
+    img.onload = () => {
+      const w=img.naturalWidth, h=img.naturalHeight;
+      if(!w || !h) return;
+      if(!M.ratio) frame.style.setProperty('--moment-ratio', `${w} / ${h}`);
+      /* 가로가 더 긴 사진이면 잘라내지 않고 통째로 보여줍니다 */
+      frame.classList.toggle('wide', w > h);
+    };
     img.src = M.img;
     img.onerror = () => { img.style.display='none'; };
   });
