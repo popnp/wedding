@@ -62,7 +62,7 @@ html.zoomed,html.nosnap{scroll-snap-type:none;scroll-behavior:auto}
 @media (min-width:700px){
   body{zoom:1.35}
   .page{min-height:calc(var(--vh,100dvh) / 1.35)}
-  .page-letter{min-height:calc(var(--vh,100dvh) / 1.35)}
+  .page-letter{height:calc(var(--vh,100dvh) / 1.35);min-height:calc(var(--vh,100dvh) / 1.35)}
   .page-hero,.page-moment{height:calc(var(--vh,100dvh) / 1.35);
     max-height:calc(var(--vh,100dvh) / 1.35)}
   /* 원본 비율 그대로 — 잘리는 곳 없이 다 보입니다 */
@@ -72,7 +72,7 @@ html.zoomed,html.nosnap{scroll-snap-type:none;scroll-behavior:auto}
 @media (min-width:1100px){
   body{zoom:1.6}
   .page{min-height:calc(var(--vh,100dvh) / 1.6)}
-  .page-letter{min-height:calc(var(--vh,100dvh) / 1.6)}
+  .page-letter{height:calc(var(--vh,100dvh) / 1.6);min-height:calc(var(--vh,100dvh) / 1.6)}
   .page-hero,.page-moment{height:calc(var(--vh,100dvh) / 1.6);
     max-height:calc(var(--vh,100dvh) / 1.6)}
 }
@@ -301,13 +301,20 @@ a{color:inherit;text-decoration:none}
 /* 예식장 — 약도 한 장. 칼럼 폭을 꽉 채웁니다 (글씨가 작아서요).
    비율은 CONFIG.mapRatio 로 바꿉니다 ('1 / 1' = 정사각형).
    그림이 잘리지 않도록 contain 으로 담고, 남는 자리는 바탕색이 채웁니다. */
-.venue-map{margin:22px auto 0;width:100%;
+.venue-map{margin:22px auto 0;width:100%;max-width:none;
   aspect-ratio:var(--map-ratio, 1 / 1);
   background:#EFEAE0;overflow:hidden;position:relative;display:block}
 .venue-map img,.venue-map a{display:block;width:100%;height:100%}
 .venue-map img{object-fit:contain}
 .venue-map.empty{display:grid;place-items:center;font-family:var(--pt);
   font-size:var(--s6);color:#B0B0B0;letter-spacing:.05em;line-height:1.9}
+/* 화면이 넓어지면 약도는 본문 칼럼을 넘어 더 크게 — 글씨가 작아서요.
+   칼럼보다 넓어지면 auto 여백이 듣지 않아 오른쪽으로 밀립니다.
+   그래서 부모 가운데를 잡고 절반만큼 되돌려 세웁니다. */
+@media (min-width:480px){
+  .venue-map{width:min(90vw, 560px);
+    margin-left:50%; transform:translateX(-50%)}
+}
 .nav-btns{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-top:22px}
 .nav-btn{padding:0 4px;font-size:var(--s6);letter-spacing:.01em;text-align:center}
 /* 전경 사진 — inner 를 벗어나 좌우 끝까지 갑니다.
@@ -410,19 +417,28 @@ a{color:inherit;text-decoration:none}
    사진이 화면 맨 아래를 좌우 끝까지 채웁니다. 비율은 원본 2.05:1. */
 /* ── 손편지 — 처음부터 전문이 보입니다.
    글이 화면보다 길면 페이지가 늘어나고 스크롤로 읽습니다. */
-.page-letter{justify-content:center;height:auto;min-height:var(--vh,100dvh);
-  overflow:visible;
+/* 편지는 딱 한 화면을 씁니다. 높이를 화면에 고정해야
+   위아래 여백이 똑같이 나뉘어 글이 정확히 가운데 놓입니다.
+   (글자 크기는 아래 JS 가 이 높이에 맞춰 잡습니다) */
+.page-letter{justify-content:center;
+  height:var(--vh,100dvh);min-height:var(--vh,100dvh);overflow:hidden;
   padding-top:calc(env(safe-area-inset-top) + 30px);
   padding-bottom:calc(env(safe-area-inset-bottom) + 30px)}
+/* 하한 크기로도 안 들어가는 기기에서만 페이지를 늘려 스크롤로 읽습니다 */
+.page-letter.tall{height:auto;min-height:var(--vh,100dvh);overflow:visible}
+/* 글자 크기는 화면 폭을 따라갑니다 (폰 12px → 넓은 화면 15px).
+   여기서 정한 값에서 시작해, 한 화면에 안 들어가면 JS 가 조금씩 줄입니다. */
 .letter{width:100%;text-align:center;word-break:keep-all;
-  font-family:var(--pt);font-size:12px;line-height:1.72;color:#222}
-/* 데스크톱은 화면이 넓어 글자가 작아 보입니다 — 한 단계 키웁니다 */
-@media (min-width:700px){ .letter{font-size:14px;line-height:1.8} }
+  font-family:var(--pt);font-size:clamp(12px,3.1vw,15px);line-height:1.75;color:#222}
 .l-date{font-family:var(--sc);font-size:var(--s7);letter-spacing:.12em;
   color:var(--ink-2);margin-bottom:22px;text-transform:uppercase}
 .l-body p{margin-bottom:1.05em}
 .l-body p.q{color:var(--ink-strong)}
-.l-sign{margin-top:24px;font-weight:700;color:var(--ink-strong)}
+/* 서명 두 줄은 한 덩어리로 붙입니다.
+   본문 줄간격(1.75)을 그대로 쓰면 두 줄 사이가 벌어져 보입니다. */
+.l-note{margin-top:26px;font-size:.86em;font-weight:400;line-height:1.25;
+  color:var(--ink-2)}
+.l-sign{margin-top:0;line-height:1.35;font-weight:700;color:var(--ink-strong)}
 
 /* 계좌 페이지 */
 .page-withlove{overflow:hidden}
@@ -849,25 +865,26 @@ const CONFIG = {
   /* ── 손편지 ─────────────────────────────────────────
      q:true 로 표시한 줄은 왼쪽에 세로선이 붙는 인용입니다. */
   letter:{
-    date:'2026년 8월',
+    date:'',              /* 날짜를 다시 넣으시려면 '2026년 8월' 처럼 적으세요 */
     /* 문단을 위에서부터 그대로 이어 그립니다.
        {cut:'...'} 로 표시한 문단까지만 먼저 보이고,
        그 아래는 + 버튼을 눌러야 펼쳐집니다.                     */
     body:[
-      ['안녕하세요.'],
+      ['안녕하세요!'],
 
-      ['두 사람의 일이라고만 생각했던 결혼식 준비를 막상 시작하고 나서야, 이것이 얼마나 많은 분들의 시간을 빌리는 일인지 알게 되었습니다.'],
+      ['두 사람의 일이라고만 생각했던 결혼식 준비를 막상 시작하고 나서야, 이것이 얼마나 많은 분들의 시간을 빌리는 일인지 알아가고 있습니다.'],
 
-      ['드레스를 고르고 음악을 듣고 식순을 정하는 일보다 더 오래 붙잡고 있던 것은, 한 분 한 분의 얼굴을 떠올리는 일이었습니다. 이분께는 어떻게 소식을 전하면 좋을까. 부산까지 오시라고 말씀드리는 것이 너무 큰 부탁은 아닐까. 그 생각을 참 오래 했습니다.'],
+      ['드레스를 고르고 식순을 정하는 일보다 더 오래 붙잡고 있던 것은, 한 분 한 분의 얼굴을 떠올리는 일이었습니다. 이분께는 어떻게 소식을 전하면 좋을까. 이곳까지 오시라고 말씀드리는 것이 너무 큰 부탁은 아닐까.'],
 
-      [{cut:'직접 찾아뵙고 인사드리지 못한 것이 내내 마음에 걸립니다. 그 마음을 대신해 이렇게 긴 글을 적어 보냅니다.'}],
+      ['그 마음으로 이렇게 긴 글을 적어 보냅니다.'],
 
-      ['식은 부산에서 올립니다. 일형이 나고 자란 곳이기도 하고, 오래도록 도시에서 살다가 돌아와 마주한 소담한 어촌의 푸른 바다에 둘 다 그만 반해버렸거든요. 그 바다가 보이는 곳에서 시작하고 싶었습니다.'],
+      ['식은 부산에서 올립니다. 일형이 나고 자란 곳이기도 하고, 오래도록 도시에서 살다가 마주한 소담한 어촌의 푸른 바다에 둘 다 그만 반해버렸거든요.'],
 
-      ['요즘 저희의 가장 큰 고민은 \u2018어떻게 하면 결혼식을 잘 치를까\u2019가 아니라, \u2018멀리까지 와주시는 분들이 조금이라도 편안하고 즐거운 시간을 보내실 수 있을까\u2019입니다. 부산의 계절을 떠올리며 커피 한 잔 마시기 좋은 곳을 찾아보고, 바다가 가장 예쁜 시간은 언제인지 이야기하고, 오시는 길은 어떻게 안내해 드리면 좋을지 하나씩 헤아리고 있습니다.'],
+      ['요즘 저희의 가장 큰 고민은 \u2018어떻게 하면 결혼식을 잘 치를까\u2019가 아니라, \u2018멀리까지 와주시는 분들이 조금이라도 편안하고 즐거운 시간을 보내실 수 있을까\u2019입니다. 이 계절의 온도를 떠올리며 커피 한 잔 마시기 좋은 곳을 찾아보고, 바다가 가장 예쁜 시간은 언제인지 이야기하고, 오시는 길은 어떻게 안내해 드리면 좋을지 하나씩 헤아리고 있습니다.'],
 
-      ['결혼식을 위해 부산에 와주시는 것이 아니라, 부산으로 작은 여행을 떠나듯 함께 와주시면 좋겠습니다.'],
+      ['결혼식을 위해 이곳으로 와주시는 것이 아니라, 작은 여행을 떠나듯 함께 와주시면 좋겠습니다.'],
     ],
+    signNote:'8월의 어느 날,',      /* 서명 위 작은 한 줄 */
     sign:'일형 · 성준 드림',
   },
   accounts:[
@@ -1075,6 +1092,7 @@ function daysLeft(){
     (L.date?`<p class="l-date">${esc(L.date)}</p>`:'') +
     `<div class="l-body">` +
       flat.map(par).join('') +
+      (L.signNote?`<p class="l-note">${esc(L.signNote)}</p>`:'') +
       (L.sign?`<p class="l-sign">${esc(L.sign)}</p>`:'') +
     `</div>`;
 })();
@@ -1086,17 +1104,25 @@ function daysLeft(){
 (function(){
   const pg=$('.page-letter'), el=$('#letter');
   if(!pg || !el) return;
-  const MIN=9.5;                         /* 이보다 작아지지는 않습니다 */
+  const MAX=19, MIN=9.5;   /* 이 사이에서 '들어가는 가장 큰 크기' 를 찾습니다 */
+
+  const box=$('.inner', pg) || el;
 
   const fit=()=>{
-    el.style.fontSize='';                /* CSS 기본값(폰 12px · 웹 14px)에서 시작 */
-    let size=parseFloat(getComputedStyle(el).fontSize);
-    let guard=0;
-    while(pg.getBoundingClientRect().height > innerHeight - 6
-          && size > MIN && guard++ < 60){
+    /* 큰 쪽에서 시작해 편지가 페이지 안에 들어올 때까지 줄입니다.
+       화면이 넉넉하면 그만큼 크게 보이고, 좁으면 필요한 만큼만 작아집니다. */
+    pg.classList.remove('tall');
+    const room = () => pg.clientHeight
+      - parseFloat(getComputedStyle(pg).paddingTop)
+      - parseFloat(getComputedStyle(pg).paddingBottom);
+    let size=MAX, guard=0;
+    el.style.fontSize = size+'px';
+    while(box.scrollHeight > room() && size > MIN && guard++ < 60){
       size -= 0.25;
       el.style.fontSize = size.toFixed(2)+'px';
     }
+    /* 가장 작게 줄여도 안 들어가면 페이지를 늘려 스크롤로 읽게 합니다 */
+    if(box.scrollHeight > room() + 2) pg.classList.add('tall');
   };
 
   fit();
