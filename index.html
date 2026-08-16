@@ -51,7 +51,7 @@
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-snap-type:y proximity;scroll-behavior:smooth;-webkit-text-size-adjust:100%}
 /* 손가락으로 확대한 동안에는 스냅을 끕니다 — 보던 자리에 그대로 머뭅니다 */
-html.zoomed{scroll-snap-type:none;scroll-behavior:auto}
+html.zoomed,html.nosnap{scroll-snap-type:none;scroll-behavior:auto}
 /* 데스크톱 — 폰 폭(430px) 그대로면 너무 작아 보입니다.
    조판을 다시 짜지 않고 화면 전체를 확대해 비율을 그대로 유지합니다.
    확대만큼 페이지 높이도 늘려야 스냅과 스크롤이 어긋나지 않습니다. */
@@ -557,9 +557,13 @@ a{color:inherit;text-decoration:none}
 
 <!-- ══ MOMENTS ══════════════════════════════════════════ -->
 <section class="page page-moment">
-  <div class="moment-frame" id="momentFrame">
-    <img id="momentImg" alt="" loading="lazy" decoding="async" src="">
-  </div>
+  <div class="moment-frame"><img alt="" loading="lazy" decoding="async" src=""></div>
+</section>
+<section class="page page-moment">
+  <div class="moment-frame"><img alt="" loading="lazy" decoding="async" src=""></div>
+</section>
+<section class="page page-moment">
+  <div class="moment-frame"><img alt="" loading="lazy" decoding="async" src=""></div>
 </section>
 
 <!-- ══ LETTER ═══════════════════════════════════════════ -->
@@ -784,12 +788,19 @@ const CONFIG = {
 
   /* Moments — img/01.jpg ~ / 가로 1080px 이내로 리사이즈 필수
      speed : 슬라이드 속도 (px/frame). 0 이면 자동이동 정지    */
-  /* ── 8번 페이지 사진 ────────────────────────────────
+  /* ── 사진 페이지 ────────────────────────────────────
+     한 줄이 한 페이지입니다. 위에서부터 순서대로 들어갑니다.
      img   : 사진 경로
      ratio : 넓은 화면(웹)에서 유지할 원본 비율.
              세로 사진이면 '2 / 3', 가로 사진이면 '3 / 2' 처럼 적습니다.
-             폰에서는 이 값과 상관없이 화면을 꽉 채웁니다.        */
-  moment:{ img:'img/04.jpg', ratio:'2 / 3' },
+             폰에서는 이 값과 상관없이 기종에 맞춰 화면을 꽉 채웁니다.
+     ※ 사진을 더하거나 빼시려면 이 목록과 함께 본문의
+       <section class="page page-moment"> 도 같은 수로 맞춰 주세요.   */
+  moments:[
+    { img:'img/04.jpg', ratio:'2 / 3' },
+    { img:'img/05.jpg', ratio:'2 / 3' },
+    { img:'img/06.jpg', ratio:'2 / 3' },
+  ],
 
   /* ── 손편지 ─────────────────────────────────────────
      q:true 로 표시한 줄은 왼쪽에 세로선이 붙는 인용입니다. */
@@ -1181,11 +1192,14 @@ function daysLeft(){
    5. MOMENTS — 사진 한 장
    ═══════════════════════════════════════════════════════════ */
 (function(){
-  const M=CONFIG.moment, img=$('#momentImg'), frame=$('#momentFrame');
-  if(!M || !img || !frame) return;
-  if(M.ratio) frame.style.setProperty('--moment-ratio', M.ratio);
-  img.src = M.img;
-  img.onerror = () => { img.style.display='none'; };
+  const list=CONFIG.moments||[];
+  $$('.page-moment').forEach((pg,i)=>{
+    const M=list[i], frame=$('.moment-frame',pg), img=$('img',frame||pg);
+    if(!M || !frame || !img){ pg.style.display='none'; return; }
+    if(M.ratio) frame.style.setProperty('--moment-ratio', M.ratio);
+    img.src = M.img;
+    img.onerror = () => { img.style.display='none'; };
+  });
 })();
 
 /* 7. 계좌 토글 */
@@ -1201,9 +1215,23 @@ function daysLeft(){
             data-msg="계좌번호를 복사했습니다">Copy</button></p>
         <p class="bank-bank">${esc(b.bank)}</p></div>`).join('')}
     </div></div></div>`).join('');
+  /* 아코디언을 여닫으면 페이지 높이가 바뀝니다.
+     그때 브라우저가 스크롤 스냅을 다시 잡으면서 맨 위로 튕겨 나갑니다.
+     여닫는 동안(0.32초 애니메이션)만 스냅을 끄고, 보던 자리를 붙잡아 둡니다. */
   $('#acc').addEventListener('click',e=>{
     const h=e.target.closest('.acc-head'); if(!h) return;
+
+    const y=scrollY, root=document.documentElement;
+    root.classList.add('nosnap');
+
     h.setAttribute('aria-expanded', h.parentElement.classList.toggle('on'));
+
+    const hold=()=>{ if(scrollY!==y) scrollTo(0,y); };
+    hold();
+    requestAnimationFrame(hold);
+    const t=setInterval(hold, 40);                /* 펼쳐지는 동안 계속 붙잡습니다 */
+    setTimeout(()=>{ clearInterval(t); hold();
+      root.classList.remove('nosnap'); }, 420);
   });
 })();
 
