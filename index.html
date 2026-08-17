@@ -355,7 +355,7 @@ a{color:inherit;text-decoration:none}
 .page-picks .intro{margin:20px 0 0}
 /* 카테고리 필터 탭 — 가로로 넘칠 때는 스크롤 */
 .pick-tabs{display:flex;gap:5px;overflow-x:auto;scrollbar-width:none;
-  width:100%;max-width:430px;margin:0 auto;padding:0 var(--pad);
+  width:100%;max-width:430px;margin:18px auto 0;padding:0 var(--pad);
   box-sizing:border-box;scroll-behavior:smooth}
 .pick-tabs::-webkit-scrollbar{display:none}
 .pick-tab{flex:0 0 auto;border:1px solid var(--line);background:none;
@@ -592,12 +592,12 @@ a{color:inherit;text-decoration:none}
 
 <!-- ══ OUR PICKS ═══════════════════════════════════════ -->
 <section class="page page-picks">
-  <div class="pick-tabs" id="pickTabs" role="tablist"></div>
   <div class="spots-wrap rise">
     <div class="spots" id="spots"></div>
     <button class="spot-arw prev" type="button" id="spotPrev" aria-label="이전 장소">&#8249;</button>
     <button class="spot-arw next" type="button" id="spotNext" aria-label="다음 장소">&#8250;</button>
   </div>
+  <div class="pick-tabs" id="pickTabs" role="tablist"></div>
   <div class="inner rise">
     <a class="picks-map" id="picksMap" target="_blank" rel="noopener"></a>
     <p class="intro" id="picksIntro"></p>
