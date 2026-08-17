@@ -3,6 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+
+<!-- 검색엔진 차단 — 링크를 받은 분은 그대로 볼 수 있지만
+     구글·네이버 검색 결과에는 나오지 않습니다. 계좌번호와
+     혼주 성함이 검색에 남지 않도록 하기 위한 것입니다. -->
+<meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
 <title>2026년 10월 3일, 일형과 성준의 결혼식에 초대합니다.</title>
 
 <!-- OG — 카카오가 캐싱합니다. 배포 전 확정 필수.
@@ -34,7 +39,21 @@
 :root{
   --ink:#444444;          /* 본문 — 종이 잉크 느낌. 대비 9.7:1 (AAA) */
   --ink-strong:#111111;   /* 제목 · 이름 등 강조 */
-  --ink-2:#8A8A8A; --line:#E0DACE; --bg:#F8F4EB;
+  /* ── 라벨·부가설명 회색 (주소 · 카드 설명 · 작은 라벨 22곳) ──
+     아래 한 줄만 바꾸면 전부 따라갑니다. 대비는 크림 배경 기준.
+       #8A8A8A  3.15:1  원래 값. 옅어서 잘 안 보였습니다
+       #666666  5.2:1   중간
+       #5C5C5C  6.1:1   조금 더 진하게
+       #444444  8.9:1   본문과 같은 색 ← 지금 (가장 잘 읽힘)      */
+  /* ── 글자 색은 두 층뿐입니다 ──────────────────────────
+     #111 (--ink-strong) : 제목 · 이름 · 숫자 · 강조하는 한 줄
+     #6E6E6E (--ink-2)   : 그 밖의 모든 것 (본문 · 설명 · 라벨)
+     한글은 굵기 700 으로 존재감을 주고 색은 한 톤 밝게 두어,
+     굵기가 같아도 색으로 층이 보이게 했습니다.
+     한꺼번에 조절: 더 밝게 #7A7A7A / 더 진하게 #5C5C5C        */
+  --ink-2:#6E6E6E;
+  --soft:var(--ink-2);        /* 예전 이름. 같은 색을 가리킵니다 */
+  --line:#E0DACE; --bg:#F8F4EB;
   --pink:#FF2E7E; --blue:#1B35C4; --yellow:#E9A900; --green:#00874A;
   --accent:#111111;
   /* ★ 키컬러 — 미정. 정해지면 이 한 줄만 바꾸면 달력 전체가 따라갑니다 */
@@ -130,7 +149,8 @@ a{color:inherit;text-decoration:none}
 /* 가장자리 여백 — 원본 시안의 가로폭 3.9% */
 .page-hero{--hero-edge:clamp(15px,4vw,30px)}
 /* 사진과 글자가 함께 들어앉는 틀. 글자는 항상 사진 위에 붙어 다닙니다 */
-.hero-frame{position:relative;width:100%;height:100%;overflow:hidden;background:#000}
+.hero-frame{position:relative;width:100%;height:100%;overflow:hidden;
+  background:var(--bg)}   /* 사진이 도착하기 전 잠깐 보이는 색 */
 
 /* 사진 — 비율은 그대로, 넘치는 쪽만 잘립니다.
    세로로 긴 폰은 좌우가, 넓은 화면은 위아래가 잘립니다.
@@ -163,7 +183,7 @@ a{color:inherit;text-decoration:none}
 
 .cue{position:absolute;left:0;right:0;bottom:calc(env(safe-area-inset-bottom) + 78px);
   z-index:3;display:flex;flex-direction:column;align-items:center;gap:12px}
-.cue span{font-family:var(--sc);font-size:var(--s7);font-weight:500;letter-spacing:.22em;
+.cue span{font-family:var(--sc);font-size:var(--s7);font-weight:600;letter-spacing:.22em;
   text-transform:uppercase;color:var(--ink-2)}
 .scroll-line{display:block;width:1px;height:38px;position:relative;overflow:hidden;
   background:rgba(255,255,255,.34)}
@@ -172,16 +192,30 @@ a{color:inherit;text-decoration:none}
 @keyframes drop{0%{transform:translateY(-100%)}60%,100%{transform:translateY(100%)}}
 
 /* ═══ 공통 ═══════════════════════════════════════════════ */
-.lead{font-family:var(--pt);font-size:var(--s4);line-height:2.15}
+/* 2번 인사말 — 굵기는 700 으로 두고 색으로 위계를 만듭니다.
+   <b> 로 감싼 줄만 진한 먹색(#111), 나머지는 한 톤 밝게.
+   더 밝게: #7A7A7A(3.9:1) / 더 진하게: #5C5C5C(6.1:1)        */
+.lead{font-family:var(--pt);font-size:var(--s4);line-height:2.15;font-weight:700;
+  color:var(--soft)}
 .lead b{font-weight:700;color:var(--ink-strong)}
 .lead p+p{margin-top:1.5em}
-.intro{font-size:var(--s4);line-height:1.9;color:var(--ink-2);margin-bottom:30px}
+/* ── 굵기 한 단계 올린 곳 (2026-08) ─────────────────────
+   고운바탕은 400 다음이 바로 700 입니다. 중간 굵기가 없어서
+   400 → 700 은 꽤 큰 변화입니다. 되돌리려면 font-weight 줄만 지우세요.
+   ※ 굵게 하는 대신 색을 진하게(--ink-strong) 하는 방법도 있습니다.  */
+.intro{font-size:var(--s4);line-height:1.9;color:var(--soft);margin-bottom:30px;
+  font-weight:700}
 .intro p+p{margin-top:1.5em}
 .hairline{height:0;margin:70px auto}   /* 인사말 → 혼주 사이 140px */
 
-.family{display:grid;grid-template-columns:1fr 1fr;gap:0 14px;align-items:start}
-.family p{font-size:var(--s5);line-height:1.55}
-.family span{display:block;font-size:var(--s5);color:var(--ink-2);margin-top:5px}
+/* 혼주 — 아래 '차남 성준' 줄을 위 성함 줄과 같은 폭으로 벌립니다.
+   justify-items:center 로 칸 안에서 글자 폭만 차지하게 만든 뒤,
+   span 을 flex 로 양끝 정렬하면 위 줄 폭에 정확히 맞습니다. */
+.family{display:grid;grid-template-columns:1fr 1fr;gap:0 14px;align-items:start;
+  justify-items:center}
+.family p{font-size:var(--s5);line-height:1.55;font-weight:700;color:var(--soft)}
+.family span{display:flex;justify-content:space-between;align-items:baseline;gap:10px;
+  font-size:var(--s5);color:var(--soft);margin-top:5px;font-weight:700}
 .family b{font-weight:700;color:var(--ink);font-size:var(--s4)}
 @media (max-width:340px){                 /* 아주 좁은 화면에서는 위아래로 */
   .family{grid-template-columns:1fr;gap:20px 0}
@@ -192,7 +226,7 @@ a{color:inherit;text-decoration:none}
 .row dt{font-family:var(--sc);font-size:var(--s7);letter-spacing:.16em;color:var(--ink-2);margin-bottom:5px}
 .val{font-family:var(--serif);font-weight:700;font-size:var(--s3);letter-spacing:.03em}
 .val-kr{font-size:var(--s4)}
-.sub{font-size:var(--s6);line-height:1.75;color:var(--ink-2);margin-top:3px}
+.sub{font-size:var(--s6);line-height:1.75;color:var(--soft);margin-top:3px;font-weight:700}
 .sub+.sub{margin-top:6px}
 .sub.gap{margin-top:20px}
 
@@ -203,32 +237,70 @@ a{color:inherit;text-decoration:none}
 .btn:active{background:#F2ECE0;border-color:var(--ink)}
 
 /* ═══ 보딩패스 카드 ═══════════════════════════════════════ */
-.ticket{position:relative;display:flex;border:1px solid var(--ink);background:var(--bg);text-align:center}
+.ticket{position:relative;display:flex;border:1px solid var(--ink);background:var(--bg);
+  text-align:center;border-radius:8px;overflow:hidden}   /* 모서리 둥글게 + 반원을 잘라내기 위해 hidden */
 .ticket-main{flex:1;padding:20px 16px}
-.ticket-stub{flex:0 0 74px;padding:20px 10px;display:flex;flex-direction:column;
+.ticket-stub{flex:0 0 84px;padding:20px 9px;display:flex;flex-direction:column;
   align-items:center;justify-content:space-between}
-.perf{position:absolute;top:0;bottom:0;right:74px;width:1px;
-  background:repeating-linear-gradient(to bottom,var(--ink) 0 3px,transparent 3px 7px)}
-.perf::before,.perf::after{content:'';position:absolute;left:50%;width:12px;height:12px;
-  transform:translateX(-50%);border-radius:50%;background:var(--bg)}
-.perf::before{top:-6px}.perf::after{bottom:-6px}
+/* 절취선 — 테두리와 같은 1px 이지만 점을 잘게 쪼개 더 가늘어 보이게 했습니다.
+   위아래 끝까지 이어지도록 top/bottom 을 0 으로 둡니다.
+   (예전에는 양 끝에 12px 원을 덮어 끝이 비어 보였습니다)          */
+.perf{position:absolute;top:5px;bottom:5px;right:84px;width:1px;opacity:.55;
+  background:repeating-linear-gradient(to bottom,
+    var(--ink) 0 1.5px, transparent 1.5px 4px)}
+/* 절취선 양 끝의 움푹 파인 자리.
+   원의 절반이 티켓 밖으로 나가고, 티켓의 overflow:hidden 이 그 절반을 잘라내
+   안쪽 반원만 남습니다. 배경색으로 티켓 테두리를 덮고 자기 테두리로 호를 그립니다. */
+/* 절취선 양 끝의 움푹 파인 자리 —
+   원을 덮어 가리는 대신 티켓 자체를 반원 모양으로 '오려냅니다'(mask).
+   테두리까지 함께 잘려 나가므로 파인 자리에 직선이 남을 수가 없습니다.
+   오려내기를 모르는 옛 브라우저에서는 그냥 곧은 티켓으로 보입니다. */
+.ticket{
+  --notch:4.5px;
+  --notch-x:calc(100% - 84px);
+  -webkit-mask:
+    radial-gradient(circle var(--notch) at var(--notch-x) 0,
+      transparent 99%, #000 100%),
+    radial-gradient(circle var(--notch) at var(--notch-x) 100%,
+      transparent 99%, #000 100%);
+  -webkit-mask-composite:source-in;
+  mask:
+    radial-gradient(circle var(--notch) at var(--notch-x) 0,
+      transparent 99%, #000 100%),
+    radial-gradient(circle var(--notch) at var(--notch-x) 100%,
+      transparent 99%, #000 100%);
+  mask-composite:intersect}
+/* 파인 자리의 휜 호.
+   오려내기가 직선 테두리를 이미 지웠으니, 여기서는 테두리만 있는 원을
+   반원 입구보다 살짝 크게 놓아 호를 그립니다.
+   원의 바깥 절반은 티켓의 overflow:hidden 이 잘라냅니다.        */
+.notch{position:absolute;right:84px;width:11px;height:11px;z-index:2;
+  border-radius:50%;border:1px solid var(--ink);background:none;pointer-events:none}
+.notch.top{top:0;transform:translate(50%,-50%)}
+.notch.bot{bottom:0;transform:translate(50%,50%)}
 .tk-brand{font-family:var(--sc);font-weight:600;font-size:var(--s7);letter-spacing:.2em;
   text-transform:uppercase;color:var(--ink-2)}
-.tk-route{display:flex;align-items:center;justify-content:center;gap:12px;margin:14px 0 18px}
-.tk-city{font-family:var(--serif);font-weight:700;font-size:var(--s3);letter-spacing:.09em}
-.tk-plane{flex:0 0 auto;width:22px;color:var(--accent)}
+.tk-route{display:flex;align-items:center;justify-content:center;gap:12px;margin:14px 0 18px;
+  color:var(--ink)}   /* BUSAN 과 비행기가 같은 색을 씁니다 */
+.tk-city{font-family:var(--serif);font-weight:700;font-size:25px;letter-spacing:.09em}
+.tk-plane{flex:0 0 auto;width:34px;color:currentColor}   /* 색은 옆 BUSAN 과 같게 */
 .tk-plane svg{width:100%;height:auto;display:block;fill:currentColor}
 .tk-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px 8px}
 .tk-lab{font-family:var(--sc);font-size:var(--s8);font-weight:500;letter-spacing:.16em;
   text-transform:uppercase;color:var(--ink-2)}
-.tk-val{font-family:var(--serif);font-size:var(--s5);letter-spacing:.03em;margin-top:2px}
+.tk-val{font-family:var(--serif);font-size:var(--s5);letter-spacing:.03em;margin-top:2px;
+  font-weight:700}
 .tk-val.kr{font-family:var(--mj);font-size:var(--s5)}
 .tk-grid .full{grid-column:1/-1}
 .tk-addr{font-size:var(--s6);line-height:1.5;color:var(--ink-2);margin-top:3px}
-.tk-dl{font-family:var(--sc);font-size:var(--s8);font-weight:500;letter-spacing:.16em;
+.tk-dl{font-family:var(--sc);font-size:var(--s8);font-weight:600;letter-spacing:.16em;
   text-transform:uppercase;color:var(--ink-2)}
-.tk-dd{font-family:var(--serif-d);font-weight:700;font-size:24px;line-height:1;margin-top:5px}
-.barcode{width:100%;height:36px;background:repeating-linear-gradient(to right,
+.tk-dd{font-family:var(--serif-d);font-weight:700;font-size:22px;line-height:1;
+  margin-top:5px;white-space:nowrap;letter-spacing:-.02em}   /* 줄바꿈 금지 */
+/* 무늬가 11px 마다 반복됩니다. 폭을 그 배수(55px)로 고정해야
+   마지막 줄이 중간에서 끊기지 않고 좌우 여백도 정확히 같아집니다. */
+.barcode{width:55px;height:36px;margin:0 auto;
+  background:repeating-linear-gradient(to right,
   var(--ink) 0 1px,transparent 1px 3px,var(--ink) 3px 5px,transparent 5px 6px,
   var(--ink) 6px 8px,transparent 8px 11px)}
 
@@ -279,15 +351,15 @@ a{color:inherit;text-decoration:none}
   width:30px;height:30px;transform:translate(-50%,-50%);
   background:rgba(0,0,0,.1);border-radius:50%;z-index:1}
 .cal-grid .d.hl:not(.mark) u{top:calc(50% + 17px)}   /* 3일 라벨과 높이 맞춤 */
-.cal-note{font-size:var(--s6);color:var(--ink-2);margin-top:22px;line-height:1.8}
+.cal-note{font-size:var(--s6);color:var(--soft);margin-top:22px;line-height:1.8;font-weight:700}
 /* '우리의 여행이 N일 남았습니다' — 이 페이지를 마무리하는 한 줄 */
 .cd-note{margin-top:64px;font-size:clamp(17px,4.8vw,22px);line-height:1.6;
-  color:var(--ink-2);letter-spacing:-.01em}
+  color:var(--soft);letter-spacing:-.01em}
 .cd-note em{font-style:normal;font-weight:700;color:var(--ink-strong);
   font-size:1.18em;letter-spacing:0}
 
 /* ═══ DESTINATION ═════════════════════════════════════════ */
-.addr{margin-top:0;font-size:var(--s5);color:var(--ink-2)}
+.addr{margin-top:0;font-size:var(--s5);color:var(--soft);font-weight:700}
 /* 복사 · 내비 · 구글맵 — 같은 상자 */
 .copy-sm,.nav-btn,.picks-map{display:inline-flex;align-items:center;justify-content:center;
   min-height:26px;padding:0 10px;border:1px solid var(--line);background:var(--bg);
@@ -321,14 +393,16 @@ a{color:inherit;text-decoration:none}
 .nav-btn{padding:0 4px;font-size:var(--s6);letter-spacing:.01em;text-align:center}
 /* 전경 사진 — inner 를 벗어나 좌우 끝까지 갑니다.
    높이를 정해두어야 페이지가 화면보다 길어지지 않습니다.       */
-.venue-shot{width:100%;margin:26px 0 0;overflow:hidden}
-/* 정사각형으로 잘라둔 사진이라 그대로 정사각형 자리에 들어갑니다.
-   폰에서는 좌우 끝까지 꽉 차고 잘리는 곳이 없습니다.
-   화면이 아주 낮은 기기에서만 위아래가 조금 잘립니다. */
-.venue-shot img{width:100%;aspect-ratio:1 / 1;height:auto;max-height:56vh;
-  object-fit:cover;object-position:center center;display:block}
-.park{margin-top:26px;font-size:var(--s5);line-height:1.8;color:var(--ink-2)}
-.park2{margin-top:24px;font-size:var(--s5);line-height:1.8;color:var(--ink-2)}
+.venue-shot{width:100%;margin:26px 0 0;overflow:hidden;
+  display:flex;justify-content:center}   /* 사진이 좁아지면 가운데로 */
+/* 전경 사진은 자르지 않고 통째로 보여줍니다.
+   높이를 먼저 정하고 폭은 원본 비율(600:729)이 알아서 따라옵니다.
+   그래서 정사각형이던 때와 높이는 같고 폭만 좁아집니다.
+   ※ 사진을 다른 비율로 바꾸시면 aspect-ratio 숫자도 같이 고쳐주세요. */
+.venue-shot img{height:min(100vw, var(--wide), 56vh);width:auto;
+  aspect-ratio:600 / 729;object-fit:cover;display:block}
+.park{margin-top:26px;font-size:var(--s5);line-height:1.8;color:var(--soft);font-weight:700}
+.park2{margin-top:24px;font-size:var(--s5);line-height:1.8;color:var(--soft);font-weight:700}
 
 /* ═══ PICKS ═══════════════════════════════════════════════ */
 .spots-wrap{width:100%;max-width:430px;margin:8px auto 0;position:relative;z-index:2;
@@ -352,10 +426,10 @@ a{color:inherit;text-decoration:none}
   gap:6px;flex-wrap:wrap}
 .spot-meta .st{color:var(--ink-strong);font-weight:700}
 .spot-meta .dot{opacity:.45}
-.page-picks .intro{margin:20px 0 0}
+.page-picks .intro{margin:40px 0 0}
 /* 카테고리 필터 탭 — 가로로 넘칠 때는 스크롤 */
 .pick-tabs{display:flex;gap:5px;overflow-x:auto;scrollbar-width:none;
-  width:100%;max-width:430px;margin:18px auto 0;padding:0 var(--pad);
+  width:100%;max-width:430px;margin:10px auto 0;padding:0 var(--pad);
   box-sizing:border-box;scroll-behavior:smooth}
 .pick-tabs::-webkit-scrollbar{display:none}
 .pick-tab{flex:0 0 auto;border:1px solid var(--line);background:none;
@@ -364,12 +438,29 @@ a{color:inherit;text-decoration:none}
 .pick-tab[aria-selected="true"]{border-color:var(--ink-strong);color:var(--ink-strong);
   font-weight:700}
 .spot-arch{margin-top:4px;font-size:11px;color:var(--ink-strong)}
-.spot-desc{margin-top:5px;font-size:var(--s6);line-height:1.6;color:var(--ink-2)}
-/* 화살표 — 사진 영역 위에 겹칩니다 */
-.spot-arw{position:absolute;top:0;width:56px;height:var(--img-h,100%);z-index:4;
+.spot-desc{margin-top:5px;font-size:var(--s6);line-height:1.6;color:var(--soft)}
+/* ── 썸네일 격자 (CONFIG.picks.layout:'grid') ─────────────
+   3열로 사진만 깔고 이름을 사진 위에 얹습니다.
+   설명·평점은 감춥니다 — 자세한 건 눌러서 지도에서 봅니다.
+   격자 자체가 세로로 스크롤되므로 페이지는 한 화면을 유지합니다.  */
+.spots.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--gap);
+  overflow-x:hidden;overflow-y:auto;scroll-snap-type:none;
+  max-height:clamp(230px,46vh,430px);
+  padding:0 var(--pad) 2px;-webkit-overflow-scrolling:touch}
+.spots.grid .spot{position:relative;width:auto;scroll-snap-align:none}
+.spots.grid .spot-img{height:auto;aspect-ratio:5 / 4}
+.spots.grid .spot-name{position:absolute;left:0;right:0;bottom:0;margin:0;
+  padding:18px 5px 5px;font-size:11px;line-height:1.2;color:#fff;
+  background:linear-gradient(rgba(0,0,0,0),rgba(0,0,0,.66));
+  word-break:keep-all;text-shadow:0 1px 3px rgba(0,0,0,.4)}
+.spots.grid .spot-meta,.spots.grid .spot-desc,.spots.grid .spot-arch{display:none}
+.spots-wrap.grid .spot-arw{display:none}
+/* 화살표는 사진 위에 겹치면 사진을 가려 복잡해 보입니다.
+   사진 아래 글자 줄 높이로 내려 놓습니다. */
+.spot-arw{position:absolute;top:var(--img-h,160px);width:56px;height:62px;z-index:4;
   display:flex;align-items:center;justify-content:center;
   border:0;background:none;color:var(--ink-strong);
-  font-size:90px;line-height:1;padding:0;
+  font-size:62px;line-height:1;padding:0;
   text-shadow:0 0 14px var(--bg),0 0 6px var(--bg);transition:opacity .2s}
 .spot-arw.prev{left:0}
 .spot-arw.next{right:0}
@@ -378,7 +469,7 @@ a{color:inherit;text-decoration:none}
    바탕색보다 한 단계 짙은 톤온톤으로 채우고 테두리를 둘렀습니다.
    색은 아래 두 줄(background · border)만 고치면 됩니다 */
 .picks-map{display:flex;width:100%;margin:15px auto 0;min-height:52px;
-  padding:14px 18px;border-radius:0;
+  padding:14px 18px;border-radius:999px;      /* 좌우 끝이 반원인 알약 모양 */
   background:#EFE7D6;                    /* 크림(#F8F4EB) 보다 한 톤 짙게 */
   border:1px solid #DCD2BC;              /* 테두리는 배경보다 다시 한 톤 짙게 */
   color:var(--ink-strong);
@@ -394,7 +485,8 @@ a{color:inherit;text-decoration:none}
    웹 : 사진 원본 비율 그대로, 화면 높이에 맞춰 가운데 놓입니다 */
 .page-moment{height:var(--vh,100dvh);max-height:var(--vh,100dvh);
   overflow:hidden;padding:0;background:var(--bg)}
-.moment-frame{position:relative;width:100%;height:100%;overflow:hidden;background:#000}
+.moment-frame{position:relative;width:100%;height:100%;overflow:hidden;
+  background:var(--bg)}   /* 사진이 도착하기 전 잠깐 보이는 색 */
 .moment-frame img{position:absolute;inset:0;width:100%;height:100%;max-width:none;
   object-fit:cover;object-position:center center}
 /* 가로로 긴 사진은 세로로 긴 폰 화면을 억지로 채우면 서너 배로 확대돼
@@ -442,16 +534,18 @@ a{color:inherit;text-decoration:none}
 /* 글자 크기는 화면 폭을 따라갑니다 (폰 12px → 넓은 화면 15px).
    여기서 정한 값에서 시작해, 한 화면에 안 들어가면 JS 가 조금씩 줄입니다. */
 .letter{width:100%;text-align:center;word-break:keep-all;
-  font-family:var(--pt);font-size:clamp(12px,3.1vw,15px);line-height:1.75;color:#222}
+  font-family:var(--pt);font-size:clamp(12px,3.1vw,15px);line-height:1.75;
+  color:var(--soft);font-weight:700}          /* 400 → 700. 되돌리려면 이 줄만 지우세요 */
 .l-date{font-family:var(--sc);font-size:var(--s7);letter-spacing:.12em;
   color:var(--ink-2);margin-bottom:22px;text-transform:uppercase}
 .l-body p{margin-bottom:1.05em}
 .l-body p.q{color:var(--ink-strong)}
 /* 서명 두 줄은 한 덩어리로 붙입니다.
    본문 줄간격(1.75)을 그대로 쓰면 두 줄 사이가 벌어져 보입니다. */
-.l-note{margin-top:26px;font-size:.86em;font-weight:400;line-height:1.25;
+.l-note{margin-top:26px;font-size:.86em;font-weight:700;line-height:1;
   color:var(--ink-2)}
-.l-sign{margin-top:0;line-height:1.35;font-weight:700;color:var(--ink-strong)}
+/* 두 줄을 바짝 붙입니다. 음수 여백으로 줄간격이 남긴 자리까지 걷어냅니다 */
+.l-sign{margin-top:-3px;line-height:1;font-weight:700;color:var(--ink-strong)}
 
 /* 계좌 페이지 */
 .page-withlove{overflow:hidden}
@@ -478,7 +572,7 @@ a{color:inherit;text-decoration:none}
 @media (min-width:700px){
   .moment-frame{width:auto;max-width:100%;aspect-ratio:var(--moment-ratio, 2 / 3)}
   /* 폰에서 '화면 끝까지' 였던 사진들을 본문 칼럼 폭(--wide)으로 묶습니다 */
-  .venue-shot,.page-end .end-shot{width:min(100%,var(--wide));
+  .page-end .end-shot{width:min(100%,var(--wide));
     margin-left:auto;margin-right:auto}
   .page-end .end-shot img{max-height:var(--vh,100dvh)}
 }
@@ -487,7 +581,8 @@ a{color:inherit;text-decoration:none}
 <body>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
-<symbol id="plane" viewBox="0 0 11 4.6"><path d="M11,2.3 L7.4,1.72 L4.4,0 L3.4,0 L5.8,1.9 L1.2,1.5 L0.5,0.5 L0,0.6 L0,4 L0.5,4.1 L1.2,3.1 L5.8,2.7 L3.4,4.6 L4.4,4.6 L7.4,2.88 Z"/></symbol>
+<!-- 이륙하는 비행기. Material Symbols(flight_takeoff) 기반, Apache License 2.0 -->
+<symbol id="plane" viewBox="0 0 24 24"><path d="M22.07 9.64c-.21-.8-1.04-1.28-1.84-1.06L14.92 10l-6.9-6.43-1.93.51 4.14 7.17-4.97 1.33-1.97-1.54-1.45.39 1.82 3.16.77 1.33 1.6-.43 5.31-1.42 4.35-1.16L21 11.49c.81-.23 1.28-1.05 1.07-1.85z"/></symbol>
 </defs></svg>
 
 <div class="prog" id="prog"></div>
@@ -544,6 +639,7 @@ a{color:inherit;text-decoration:none}
         </div>
       </div>
       <div class="perf"></div>
+      <span class="notch top"></span><span class="notch bot"></span>
       <div class="ticket-stub">
         <div><p class="tk-dl">D-Day</p><p class="tk-dd" id="dday">&mdash;</p></div>
         <div class="barcode"></div>
@@ -599,8 +695,8 @@ a{color:inherit;text-decoration:none}
   </div>
   <div class="pick-tabs" id="pickTabs" role="tablist"></div>
   <div class="inner rise">
-    <a class="picks-map" id="picksMap" target="_blank" rel="noopener"></a>
     <p class="intro" id="picksIntro"></p>
+    <a class="picks-map" id="picksMap" target="_blank" rel="noopener"></a>
   </div>
 </section>
 
@@ -656,14 +752,14 @@ const CONFIG = {
   dateDisplay:'2026.10.03 SAT',
   /* ── 첫 화면 ────────────────────────────────────────
      heroImage      : 사진 경로. 화면비와 상관없이 꽉 채워집니다
-     heroTop        : 위 두 덩어리 [왼쪽, 오른쪽]. \u2003 = 넓은 공백
+     heroTop        : 위 글줄. 적은 만큼 칸을 나눠 간격이 균등해집니다
      heroNames      : 아래 두 덩어리 [왼쪽, 오른쪽]
      heroTitleWidth : 'Our Wedding' 한 줄이 차지하는 가로폭 비율.
                       0.92 = 양옆 여백만 남기고 꽉 참 (지금)
                       1.08 = 글자가 화면 밖으로 살짝 흘러넘침
                       0.54 = 원본 시안 크기                              */
   heroImage:'img/mainphoto.jpg',
-  heroTop:['2026. 10. 3\u2003\u200311:30 am', 'ORIN HOUSE, BUSAN'],
+  heroTop:['2026. 10. 3', '11:30 am', 'ORIN HOUSE, BUSAN'],
   heroNames:['Ilhyoung Park', 'Sungjun Baek'],
   heroTitleWidth:0.92,
   boarding:'11:00 AM', ceremony:'11:30 AM', closing:'2:00 PM',
@@ -725,13 +821,16 @@ const CONFIG = {
        (또는 mymaps.google.com 에서 지도를 만들어 공유)                */
   picks:{
     title:'Our Picks',
+    /* 카드 배치 — 'grid' 썸네일 격자 3열 / 'strip' 예전 가로 스크롤
+       이 한 줄만 바꾸면 언제든 되돌아갑니다.                        */
+    layout:'strip',
     intro:['이번 여행이 조금 더 풍성하시길 바라며,',
-           '저희가 좋아하는 곳들로',
-           '작은 가이드를 만들어 보내드립니다.'],
+           '좋아하실 곳들로',
+           '작은 여행가이드를 만들어 보았습니다.'],
     /* 보내주신 링크는 /edit 이었습니다. 하객에게 편집 화면이 열리므로
        /viewer 로 바꿔 넣었습니다. mid 값은 그대로입니다. */
     mapUrl:'https://www.google.com/maps/d/viewer?mid=1zt_ZurOH0wXZJb9A30ajkgtAuWpHh1o',
-    mapLabel:'Save Our Picks!',
+    mapLabel:'지도로 보기',
     dir:'img/picks/', ext:'.jpg',
     /* 사진은 no 값으로 고정됩니다 (img/picks/01.jpg …).
        필터를 걸어도 사진이 어긋나지 않도록 순번을 데이터에 직접 적어둡니다.
@@ -750,16 +849,42 @@ const CONFIG = {
     ],
     spots:[
       { no:'35', c:'event', name:'부산국제록페스티벌', time:'차로 60분',
-        url:'https://www.google.com/maps/search/?api=1&query=%EC%82%BC%EB%9D%BD%EC%83%9D%ED%83%9C%EA%B3%B5%EC%9B%90',
-        desc:'10월 2일(금)~4일(일) · 삼락생태공원.\n메가데스·잔나비·한로로. 유료, 예매 필수.' },
-      { no:'01', c:'walk', name:'학리방파제', time:'도보 1분',
-        desc:'예식장 바로 앞 한적한 어항 산책로.\n빨간 등대가 서 있습니다.' },
-      { no:'10', c:'cafe', name:'카페 숲 (SOOP)', rating:'4.3', time:'도보 2분',
-        desc:'학리 포구 통창 오션뷰 카페.\n루프탑도 있습니다. (화요일 휴무)' },
-      { no:'30', c:'table', name:'해녀집', rating:'4.1', time:'도보 5분',
-        desc:'학리 포구의 정겨운 노포.\n싱싱한 해산물과 장어구이.' },
+        url:'https://busanrockfestival.com/',   /* 지도 대신 공식 홈페이지 */
+        desc:'10월 2일(금)~4일(일) · 삼락생태공원.\n예식과 기간이 겹칩니다. 메가데스·잔나비·한로로.\n유료, 예매 필수.' },
       { no:'31', c:'table', name:'학리집', rating:'4.3', time:'도보 5분',
         desc:'바다 옆 야외 테이블이 있습니다.\n해산물과 전복죽.' },
+      { no:'38', c:'arch', name:'문화공감 수정 (구 정란각)', rating:'4.3', time:'차로 55분',
+        desc:'저희가 아끼는 곳. 일제강점기 목조 저택입니다.\n월요일 휴무 · 오후 5시에 닫아요.' },
+      { no:'05', c:'walk', name:'해동용궁사', rating:'4.5', time:'차로 25분',
+        desc:'바다 절벽 위에 앉은 드문 절.\n새벽 4시부터 열려 아침이 가장 좋습니다.' },
+      { no:'34', c:'event', name:'광안리 드론쇼', time:'차로 40분',
+        desc:'매주 토요일 정기공연 — 예식 당일에도 합니다.\n10월 3일 저녁 7시·9시, 각 12분. 무료입니다.' },
+      { no:'16', c:'event', name:'2026 부산비엔날레 · 스페이스 원지', rating:'4.3', time:'차로 55분',
+        desc:'8월 29일~11월 1일, 예식 주간에 열려요.\n주전시장은 을숙도. 월요일 휴무.' },
+      { no:'10', c:'cafe', name:'카페 숲 (SOOP)', rating:'4.3', time:'도보 2분',
+        desc:'학리 포구 통창 오션뷰 카페.\n루프탑도 있습니다. (화요일 휴무)' },
+      { no:'27', c:'table', name:'무명일기', rating:'4.2', time:'차로 55분',
+        desc:'조선소 창고를 고친 높은 공간.\n영도 고구마와 제철 채소로 차린 담백한 한 상.\n15,000원 · 예약제.' },
+      { no:'42', c:'table', name:'백화양곱창', rating:'4.0', time:'차로 55분',
+        desc:'부평깡통시장 곱창골목. 숯불에 구워줍니다.\n낮 12시부터 자정까지.' },
+      { no:'41', c:'table', name:'오징어랑해물이랑', rating:'4.6', time:'차로 40분',
+        desc:'오후 4시에 열어요. 테이블 예닐곱 개뿐.\n광안리에서 회 가성비는 여기가 최고.' },
+      { no:'20', c:'arch', name:'아난티 코브', rating:'4.6', time:'차로 20분',
+        arch:'민성진 · SKM건축사사무소',
+        desc:'800m 해안을 따라 낮게 눕힌 매스.\n서점 이터널저니는 묵지 않아도 들어갑니다.' },
+      { no:'15', c:'cafe', name:'모모스커피 영도점', rating:'4.5', time:'차로 55분',
+        desc:'옛 부두 창고를 고친 오픈 로스터리.\n월드바리스타챔피언 전주연의 집입니다.' },
+      { no:'50', c:'quick', name:'내호냉면', rating:'3.9', time:'차로 50분',
+        desc:'밀면이 여기서 시작됐다고 합니다.\n골목 안이라 찾기 어려워요.' },
+      { no:'01', c:'walk', name:'학리방파제', time:'도보 1분',
+        desc:'예식장 바로 앞 한적한 어항 산책로.\n빨간 등대가 서 있습니다.' },
+      { no:'08', c:'walk', name:'흰여울문화마을', rating:'4.4', time:'차로 60분',
+        desc:'절벽 위에 자리 잡은 피란민 마을입니다.\n골목마다 바다가 보여요.' },
+      { no:'22', c:'arch', name:'영화의전당', rating:'4.5', time:'차로 35분',
+        arch:'쿱 힘멜블라우 · 희림건축',
+        desc:'해체주의 건축. 세계 최대 지붕 캔틸레버.\n야외극장 조명이 켜지는 밤이 좋습니다.' },
+      { no:'30', c:'table', name:'해녀집', rating:'4.1', time:'도보 5분',
+        desc:'학리 포구의 정겨운 노포.\n싱싱한 해산물과 장어구이.' },
       { no:'02', c:'walk', name:'일광해수욕장', rating:'4.0', time:'차로 4분',
         desc:'파도가 잔잔해 거닐기 좋은 백사장.\n곡선으로 길게 이어집니다.' },
       { no:'17', c:'cafe', name:'라이프라이크', rating:'4.1', time:'차로 10분',
@@ -770,16 +895,11 @@ const CONFIG = {
         desc:'넓은 잔디 정원과 바다가 만납니다.\n조형물이 놓여 있습니다.' },
       { no:'12', c:'cafe', name:'웨이브온 커피', rating:'4.2', time:'차로 18분',
         desc:'한국건축문화대상을 받은 건축미.\n파노라마 오션뷰. 주말엔 붐빕니다.' },
-      { no:'20', c:'arch', name:'아난티 코브', rating:'4.6', time:'차로 20분',
-        arch:'민성진 · SKM건축사사무소',
-        desc:'800m 해안을 따라 낮게 눕힌 매스.\n서점 이터널저니는 묵지 않아도 들어갑니다.' },
       { no:'04', c:'walk', name:'오시리아 해안산책로', rating:'4.6', time:'차로 22분',
         desc:'아난티·힐튼 앞 바다를 따라 걷는 길.\n해동용궁사까지 이어집니다.' },
       { no:'21', c:'arch', name:'빌라쥬 드 아난티', rating:'4.6', time:'차로 22분',
         arch:'민성진 · SKM건축사사무소',
         desc:'아난티 코브와 이어지는 마을형 단지.\n산책로로 함께 둘러보시면 됩니다.' },
-      { no:'05', c:'walk', name:'해동용궁사', rating:'4.5', time:'차로 25분',
-        desc:'바다 절벽 위에 앉은 드문 절.\n새벽 4시부터 열려 아침이 가장 좋습니다.' },
       { no:'29', c:'hot', name:'해운대블루라인파크', rating:'4.5', time:'차로 30분',
         desc:'해안선을 달리는 해변열차와 스카이캡슐.\n예매가 필요합니다.' },
       { no:'39', c:'quick', name:'짱떡볶이', rating:'4.3', time:'차로 30분',
@@ -789,9 +909,6 @@ const CONFIG = {
       { no:'57', c:'cafe', name:'비비비당', rating:'4.4', time:'차로 30분',
         url:'https://www.google.com/maps/search/?api=1&query=%EB%B9%84%EB%B9%84%EB%B9%84%EB%8B%B9%20%EB%B6%80%EC%82%B0%20%ED%95%B4%EC%9A%B4%EB%8C%80%EA%B5%AC%20%EB%8B%AC%EB%A7%9E%EC%9D%B4%EA%B8%B8%20239-16',
         desc:'달맞이길 언덕의 전통 찻집.\n호박빙수와 창밖 바다가 좋습니다.' },
-      { no:'22', c:'arch', name:'영화의전당', rating:'4.5', time:'차로 35분',
-        arch:'쿱 힘멜블라우 · 희림건축',
-        desc:'해체주의 건축. 세계 최대 지붕 캔틸레버.\n야외극장 조명이 켜지는 밤이 좋습니다.' },
       { no:'33', c:'event', name:'부산국제영화제 · 영화의전당', time:'차로 35분',
         desc:'10월 6일부터 15일까지 열립니다.\n예식 사흘 뒤에 시작해요.' },
       { no:'23', c:'arch', name:'F1963', rating:'4.5', time:'차로 35분',
@@ -808,8 +925,6 @@ const CONFIG = {
         desc:'제철 재료로 차리는 컨템퍼러리 한식.\n런치가 합리적. 월·화 휴무 · 예약 필수.' },
       { no:'06', c:'walk', name:'광안리해수욕장', rating:'4.7', time:'차로 40분',
         desc:'청춘의 바다이자 야경 명소.\n저녁에 특히 좋습니다.' },
-      { no:'34', c:'event', name:'광안리 드론쇼', time:'차로 40분',
-        desc:'매주 토요일 정기공연 — 예식 당일에도 합니다.\n10월 3일 저녁 7시·9시, 각 12분. 무료입니다.' },
       { no:'07', c:'walk', name:'광안대교', rating:'4.6', time:'차로 40분',
         desc:'부산을 대표하는 다리.\n밤에 불이 들어옵니다.' },
       { no:'14', c:'cafe', name:'WERK ROASTERS', rating:'4.8', time:'차로 40분',
@@ -818,8 +933,6 @@ const CONFIG = {
         desc:'광안대교 마주 보는 계단형 스탠드.\n밤 7시부터 야시장이 섭니다. 월요일 휴무.' },
       { no:'26', c:'cafe', name:'갈매기브루잉 광안리', time:'차로 40분',
         desc:'2014년 광안리에서 시작한\n부산 1세대 크래프트 맥주.' },
-      { no:'41', c:'table', name:'오징어랑해물이랑', rating:'4.6', time:'차로 40분',
-        desc:'오후 4시에 열어요. 테이블 예닐곱 개뿐.\n광안리에서 회 가성비는 여기가 최고.' },
       { no:'46', c:'table', name:'송헌집', rating:'4.5', time:'차로 40분',
         desc:'숯불 떡갈비에 된장찌개 한 상.\n밑반찬 장맛이 좋습니다. 수요일 휴무.' },
       { no:'47', c:'quick', name:'안목', rating:'4.5', time:'차로 42분',
@@ -836,30 +949,18 @@ const CONFIG = {
       { no:'65', c:'quick', name:'기장 손칼국수', rating:'4.0', time:'차로 45분',
         url:'https://www.google.com/maps/search/?api=1&query=%EA%B8%B0%EC%9E%A5%20%EC%86%90%EC%B9%BC%EA%B5%AD%EC%88%98%20%EB%B6%80%EC%82%B0%20%EB%B6%80%EC%82%B0%EC%A7%84%EA%B5%AC%20%EC%84%9C%EB%A9%B4%EB%A1%9C%2056',
         desc:'1988년부터 서면시장 손칼국수.\n이름과 달리 서면에 있어요.' },
-      { no:'50', c:'quick', name:'내호냉면', rating:'3.9', time:'차로 50분',
-        desc:'밀면이 여기서 시작됐다고 합니다.\n골목 안이라 찾기 어려워요.' },
-      { no:'15', c:'cafe', name:'모모스커피 영도점', rating:'4.5', time:'차로 55분',
-        desc:'옛 부두 창고를 고친 오픈 로스터리.\n월드바리스타챔피언 전주연의 집입니다.' },
-      { no:'16', c:'event', name:'2026 부산비엔날레 · 스페이스 원지', rating:'4.3', time:'차로 55분',
-        desc:'8월 29일~11월 1일, 예식 주간에 열려요.\n주전시장은 을숙도. 월요일 휴무.' },
-      { no:'27', c:'table', name:'무명일기', rating:'4.2', time:'차로 55분',
-        desc:'조선소 창고를 고친 높은 공간.\n영도소반 한 상 15,000원, 예약제.' },
       { no:'19', c:'cafe', name:'삼진어묵 영도본점', rating:'4.3', time:'차로 55분',
         desc:'1953년, 피란 시절 부산에서 시작했습니다.\n어묵 베이커리와 체험역사관이 함께 있어요.' },
       { no:'28', c:'arch', name:'피아크 (P.ARK)', rating:'4.2', time:'차로 55분',
         desc:'조선소와 창고가 밀집했던 영도 해안의 재생.\n배를 닮은 매스, 바다로 열린 계단형 테라스.' },
       { no:'51', c:'table', name:'ARP (아르프)', rating:'4.2', time:'차로 55분',
         desc:'영도 봉래동의 비건 한 끼.\n고사리 파스타. 예약 필수 · 목요일 휴무.' },
-      { no:'38', c:'arch', name:'문화공감 수정 (구 정란각)', rating:'4.3', time:'차로 55분',
-        desc:'저희가 아끼는 곳. 일제강점기 목조 저택입니다.\n월요일 휴무 · 오후 5시에 닫아요.' },
       { no:'52', c:'arch', name:'브라운핸즈 백제', rating:'4.2', time:'차로 55분',
         desc:'1922년 백제병원 — 부산 최초의 근대 병원.\n요릿집·숙소를 거쳐 지금은 카페.' },
       { no:'53', c:'quick', name:'정짓간 부산역점', rating:'4.5', time:'차로 55분',
         desc:'부산역 걸어서 5분, 줄 없이 드는 국밥.\nKTX 타기 전 마지막 한 그릇으로.' },
       { no:'54', c:'cafe', name:'백구당', rating:'3.9', time:'차로 55분',
         desc:'1959년부터 그 자리인 제과점.\n크로켓과 생크림케이크. 일요일 휴무.' },
-      { no:'42', c:'table', name:'백화양곱창', rating:'4.0', time:'차로 55분',
-        desc:'부평깡통시장 곱창골목. 숯불에 구워줍니다.\n낮 12시부터 자정까지.' },
       { no:'58', c:'cafe', name:'명란브랜드연구소', rating:'4.5', time:'차로 55분',
         url:'https://www.google.com/maps/search/?api=1&query=%EB%AA%85%EB%9E%80%EB%B8%8C%EB%9E%9C%EB%93%9C%EC%97%B0%EA%B5%AC%EC%86%8C%20%EB%B6%80%EC%82%B0%20%EB%8F%99%EA%B5%AC%20%EC%98%81%EC%B4%88%EC%9C%97%EA%B8%B8%2022-1',
         desc:'주말엔 음료만 파는 명란 카페.\n초량 168계단 위, 북항 루프탑 뷰.' },
@@ -873,10 +974,9 @@ const CONFIG = {
       { no:'60', c:'quick', name:'할매재첩국', rating:'4.2', time:'차로 60분',
         url:'https://www.google.com/maps/search/?api=1&query=%ED%95%A0%EB%A7%A4%EC%9E%AC%EC%B2%A9%EA%B5%AD%20%EB%B6%80%EC%82%B0%20%EC%82%AC%EC%83%81%EA%B5%AC%20%EC%82%BC%EB%9D%BD%EB%8F%99%20%EC%82%BC%EB%9D%BD%EC%9E%AC%EC%B2%A9%EA%B1%B0%EB%A6%AC',
         desc:'낙동강 재첩국 한 그릇.\n새벽 6시부터 열어요. 해장에 좋습니다.' },
-      { no:'08', c:'walk', name:'흰여울문화마을', rating:'4.4', time:'차로 60분',
-        desc:'절벽 위에 자리 잡은 피란민 마을입니다.\n골목마다 바다가 보여요.' },
       { no:'37', c:'arch', name:'아미동 비석문화마을', time:'차로 60분',
         desc:'일제강점기 묘지의 비석을 축대로 썼습니다.\n감천마을에서 걸어서 20분.' },
+
       { no:'36', c:'arch', name:'감천문화마을', time:'차로 65분',
         desc:'지형을 깎지 않고 계단식으로 앉힌 피란민 마을.\n등고선을 따라 난 길과 집의 배치를 보세요.' },
     ],
@@ -1261,7 +1361,7 @@ function daysLeft(){
 
   const P=CONFIG.picks;
   $('#picksIntro').innerHTML = P.intro.map(esc).join('<br>');
-  $('#picksMap').textContent = '\uD83D\uDCCD ' + P.mapLabel;
+  $('#picksMap').textContent = P.mapLabel;
   $('#picksMap').href = P.mapUrl ||
     'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent('기장 '+CONFIG.venue);
   /* 카테고리로 걸러 카드를 다시 그립니다.
@@ -1273,13 +1373,14 @@ function daysLeft(){
   const card = s => {
     const href = s.url || 'https://www.google.com/maps/search/?api=1&query='
       + encodeURIComponent(s.name || '부산');
+    /* 카테고리는 위 탭에서 이미 고른 것이라 카드에서는 뺍니다.
+       남는 것은 평점과 소요시간 둘뿐 — 실제로 고를 때 쓰는 정보입니다. */
     const meta = [
       s.rating ? `<span class="st">\u2605 ${esc(s.rating)}</span>` : '',
-      `<span>${iconOf(s.c)} ${esc(labelOf(s.c))}</span>`,
       s.time ? `<span>${esc(s.time)}</span>` : ''
     ].filter(Boolean).join('<span class="dot">·</span>');
     return `<a class="spot" href="${href}" target="_blank" rel="noopener">
-      <div class="spot-img"><span class="ph">${iconOf(s.c)||s.no}</span>
+      <div class="spot-img"><span class="ph"></span>
         <img src="${P.dir}${s.no}${P.ext}" alt="" loading="lazy" decoding="async"
           onload="this.previousElementSibling.style.display='none'"
           onerror="this.style.display='none'"></div>
@@ -1292,6 +1393,13 @@ function daysLeft(){
 
   const strip=$('#spots'), tabs=$('#pickTabs');
   const prev=$('#spotPrev'), next=$('#spotNext');
+
+  /* 썸네일 격자 여부 — CONFIG.picks.layout */
+  const GRID = (P.layout||'strip') === 'grid';
+  if(GRID){
+    strip.classList.add('grid');
+    const wrap = strip.closest('.spots-wrap'); if(wrap) wrap.classList.add('grid');
+  }
 
   /* 카드 높이 고정 —
      탭마다 설명 줄 수가 달라 카드 키가 들쭉날쭉하면, 아래에 있는
@@ -1308,6 +1416,7 @@ function daysLeft(){
   };
 
   const lock = () => {
+    if(GRID) return;          /* 격자는 칸 높이가 사진으로 정해져 흔들리지 않습니다 */
     strip.style.minHeight='';
     strip.innerHTML = P.spots.map(card).join('');      /* 전부 그려서 재고 */
     let h=0;
@@ -1316,21 +1425,25 @@ function daysLeft(){
     if(h) strip.style.minHeight = h + 'px';
   };
 
+  /* 탭도 글자만. 이모지는 이 청첩장의 두 색(크림·먹색) 사이에서
+     혼자 알록달록해 시선을 가져갑니다. */
   tabs.innerHTML = CATS.map((c,i)=>
     `<button class="pick-tab" type="button" role="tab" data-key="${c.key}"
-      aria-selected="${i===0}">${c.icon?c.icon+' ':''}${esc(c.label)}</button>`).join('');
+      aria-selected="${i===0}">${esc(c.label)}</button>`).join('');
   tabs.addEventListener('click', e=>{
     const b=e.target.closest('.pick-tab'); if(!b) return;
     tabs.querySelectorAll('.pick-tab').forEach(t=>
       t.setAttribute('aria-selected', t===b ? 'true':'false'));
     b.scrollIntoView({inline:'center',block:'nearest',behavior:'smooth'});
     draw(b.dataset.key);
+    if(GRID) strip.scrollTop = 0;
   });
 
   /* 데스크톱은 마우스로 가로 스크롤이 어렵습니다 — 화살표로 넘깁니다 */
   const gp=parseFloat(getComputedStyle(strip).gap)||0;
   const step=()=>{ const c=strip.children[0]; return c ? c.offsetWidth+gp : 0; };
   function update(){
+    if(GRID) return;
     prev.disabled = strip.scrollLeft < 4;
     next.disabled = strip.scrollLeft > strip.scrollWidth-strip.clientWidth-4;
   }
