@@ -57,24 +57,25 @@ html{scroll-snap-type:y proximity;scroll-behavior:smooth;-webkit-text-size-adjus
 /* 손가락으로 확대한 동안에는 스냅을 끕니다 — 보던 자리에 그대로 머뭅니다 */
 html.zoomed,html.nosnap{scroll-snap-type:none;scroll-behavior:auto}
 /* 데스크톱 — 폰 폭(430px) 그대로면 너무 작아 보입니다.
-   조판을 다시 짜지 않고 화면 전체를 확대해 비율을 그대로 유지합니다.
-   확대만큼 페이지 높이도 늘려야 스냅과 스크롤이 어긋나지 않습니다. */
+   조판을 다시 짜지 않고 화면 전체를 확대해 비율을 유지합니다.
+   ★ 확대 배율(--zoom)은 '창 너비' 가 아니라 '창 높이' 를 보고 정합니다.
+     너비만 보면 낮고 넓은 창에서 글자가 커지다 못해 한 화면을 넘칩니다.
+     배율은 스크립트가 잡고, 여기서는 그 값을 나눠 쓰기만 합니다.     */
+.page{min-height:calc(var(--vh,100dvh) / var(--zoom,1))}
+.page-letter{height:calc(var(--vh,100dvh) / var(--zoom,1));
+  min-height:calc(var(--vh,100dvh) / var(--zoom,1))}
+.page-hero,.page-moment{height:calc(var(--vh,100dvh) / var(--zoom,1));
+  max-height:calc(var(--vh,100dvh) / var(--zoom,1))}
+
 @media (min-width:700px){
-  body{zoom:1.35}
-  .page{min-height:calc(var(--vh,100dvh) / 1.35)}
-  .page-letter{height:calc(var(--vh,100dvh) / 1.35);min-height:calc(var(--vh,100dvh) / 1.35)}
-  .page-hero,.page-moment{height:calc(var(--vh,100dvh) / 1.35);
-    max-height:calc(var(--vh,100dvh) / 1.35)}
-  /* 원본 비율 그대로 — 잘리는 곳 없이 다 보입니다 */
-  .hero-frame  {width:auto;max-width:100%;aspect-ratio:2 / 3}
+  /* 사진은 원본 비율 그대로 — 폭을 화면 높이에서 계산합니다(높이 × 2/3) */
+  .hero-frame{width:calc(var(--vh,100dvh) / var(--zoom,1) * 2 / 3);max-width:100%}
   .moment-frame{width:auto;max-width:100%;aspect-ratio:var(--moment-ratio, 2 / 3)}
-}
-@media (min-width:1100px){
-  body{zoom:1.6}
-  .page{min-height:calc(var(--vh,100dvh) / 1.6)}
-  .page-letter{height:calc(var(--vh,100dvh) / 1.6);min-height:calc(var(--vh,100dvh) / 1.6)}
-  .page-hero,.page-moment{height:calc(var(--vh,100dvh) / 1.6);
-    max-height:calc(var(--vh,100dvh) / 1.6)}
+  /* 폰에서 '화면 끝까지' 였던 사진들은 넓은 화면에서 창 폭만큼 커집니다.
+     본문 칼럼(430px) 폭으로 묶어 둡니다. */
+  .venue-shot,.page-end .end-shot{width:430px;max-width:100%;
+    margin-left:auto;margin-right:auto}
+  .page-end .end-shot img{max-height:calc(var(--vh,100dvh) / var(--zoom,1))}
 }
 body{background:var(--bg);color:var(--ink);font-family:var(--mj);
   font-size:16px;line-height:1.95;-webkit-font-smoothing:antialiased;overflow-x:hidden}
@@ -934,6 +935,25 @@ async function copy(text,msg){
     toast(ok?msg:'복사에 실패했습니다. 길게 눌러 복사해 주세요.');
   }
 }
+
+/* 0. 데스크톱 확대 배율.
+   폰(높이 860px 안팎)에서 한 화면에 맞도록 짠 조판입니다.
+   창이 그보다 높으면 그 비율만큼만 키웁니다. 최대 1.6배.
+   너비가 아니라 높이를 기준으로 삼아야, 낮고 넓은 창에서
+   내용이 화면 아래로 밀려나지 않습니다.
+   좁은 화면(700px 미만)은 폰이므로 확대하지 않습니다.        */
+(function(){
+  const DESIGN=860, MAX=1.6;
+  const apply=()=>{
+    const z = innerWidth < 700 ? 1
+            : Math.min(MAX, Math.max(1, innerHeight / DESIGN));
+    document.documentElement.style.setProperty('--zoom', z.toFixed(3));
+    document.body.style.zoom = z === 1 ? '' : z.toFixed(3);
+  };
+  apply();
+  addEventListener('resize', apply);
+  addEventListener('orientationchange', apply);
+})();
 
 /* 0. 화면 높이 — dvh 는 툴바가 접히면 같이 커집니다 */
 (function(){
