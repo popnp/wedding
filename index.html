@@ -38,6 +38,7 @@
      430px 칼럼 기준. 숫자만 바꾸면 위치·크기가 움직입니다.
      x 는 왼쪽 기준, y 는 위쪽 기준.                          */
   --plane-x:-3%;   --plane-y:70%;   --plane-w:34%;
+  --wide:480px;   /* 넓은 화면에서 사진·약도의 최대 폭 — 여기 한 곳만 고치면 전부 따라갑니다 */
   --pad:26px;
   --gap:4px;              /* 사진 사이 간격 — 지도·여행가이드·갤러리 공통 */
   --display:'Syne',sans-serif;            /* 영문 — Bold, 자간 -0.09em */
@@ -73,7 +74,7 @@ html.zoomed,html.nosnap{scroll-snap-type:none;scroll-behavior:auto}
   .moment-frame{width:auto;max-width:100%;aspect-ratio:var(--moment-ratio, 2 / 3)}
   /* 폰에서 '화면 끝까지' 였던 사진들은 넓은 화면에서 창 폭만큼 커집니다.
      본문 칼럼(430px) 폭으로 묶어 둡니다. */
-  .venue-shot,.page-end .end-shot{width:430px;max-width:100%;
+  .venue-shot,.page-end .end-shot{width:min(100%,var(--wide));
     margin-left:auto;margin-right:auto}
   .page-end .end-shot img{max-height:calc(var(--vh,100dvh) / var(--zoom,1))}
 }
@@ -161,7 +162,8 @@ a{color:inherit;text-decoration:none}
    실제 크기는 JS 가 화면폭에 맞춰 잡습니다 (CONFIG.heroTitleWidth) */
 .hero-title{top:50%;left:0;right:0;transform:translateY(-50%);
   font-family:var(--display);font-weight:700;font-size:9vw;
-  line-height:1.02;letter-spacing:-.05em;text-align:center}
+  line-height:1.02;letter-spacing:-.05em;text-align:center;
+  white-space:nowrap}          /* 줄바꿈 금지 — 두 줄은 span 으로 나눕니다 */
 .hero-title span{display:block}
 
 .cue{position:absolute;left:0;right:0;bottom:calc(env(safe-area-inset-bottom) + 78px);
@@ -313,7 +315,7 @@ a{color:inherit;text-decoration:none}
    칼럼보다 넓어지면 auto 여백이 듣지 않아 오른쪽으로 밀립니다.
    그래서 부모 가운데를 잡고 절반만큼 되돌려 세웁니다. */
 @media (min-width:480px){
-  .venue-map{width:min(90vw, 560px);
+  .venue-map{width:min(90vw, var(--wide));
     margin-left:50%; transform:translateX(-50%)}
 }
 .nav-btns{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-top:22px}
@@ -321,12 +323,6 @@ a{color:inherit;text-decoration:none}
 /* 전경 사진 — inner 를 벗어나 좌우 끝까지 갑니다.
    높이를 정해두어야 페이지가 화면보다 길어지지 않습니다.       */
 .venue-shot{width:100%;margin:26px 0 0;overflow:hidden}
-/* 넓은 화면에서는 사진이 창을 가득 채우며 한없이 커집니다.
-   폰 화면 정도의 폭으로 묶어 가운데 놓습니다. */
-@media (min-width:640px){
-  .venue-shot{width:min(100%,560px);margin-left:auto;margin-right:auto}
-  .page-end .end-shot{width:min(100%,560px)}
-}
 /* 정사각형으로 잘라둔 사진이라 그대로 정사각형 자리에 들어갑니다.
    폰에서는 좌우 끝까지 꽉 차고 잘리는 곳이 없습니다.
    화면이 아주 낮은 기기에서만 위아래가 조금 잘립니다. */
@@ -460,7 +456,7 @@ a{color:inherit;text-decoration:none}
 /* 마지막 페이지 — 사진 한 장이 화면 정중앙에 놓입니다.
    폭은 화면 끝까지 쓰고, 세로로 넘칠 만큼 긴 화면에서는 높이에 맞춰 줄입니다 */
 .page-end{padding:0;justify-content:center;align-items:center;overflow:hidden}
-.page-end .end-shot{width:100vw;max-width:100vw;display:flex;
+.page-end .end-shot{width:100%;max-width:100%;margin:0 auto;display:flex;
   align-items:center;justify-content:center}
 .page-end .end-shot img{width:100%;height:auto;max-height:var(--vh,100dvh);
   object-fit:contain;display:block}
@@ -936,6 +932,14 @@ async function copy(text,msg){
   }
 }
 
+/* 넓은 화면에서 사진·약도가 가질 수 있는 최대 폭.
+   CSS 의 --wide 한 곳에서 읽어옵니다.                        */
+function wideCap(){
+  const v = parseFloat(getComputedStyle(document.documentElement)
+              .getPropertyValue('--wide'));
+  return v || 480;
+}
+
 /* 0. 데스크톱 확대 배율.
    폰(높이 860px 안팎)에서 한 화면에 맞도록 짠 조판입니다.
    창이 그보다 높으면 그 비율만큼만 키웁니다. 최대 1.6배.
@@ -1080,7 +1084,11 @@ function daysLeft(){
   function fit(){
     if(!title||!line) return;
     title.style.fontSize='9vw';                  /* 기준값으로 되돌린 뒤 잽니다 */
-    const now=line.getBoundingClientRect().width;
+    /* 글자의 '실제 폭' 을 잽니다.
+       span 은 display:block 이라 요소를 재면 늘 틀 폭이 나옵니다.
+       Range 로 글자만 재야 크기 계산이 맞습니다.              */
+    const r=document.createRange(); r.selectNodeContents(line);
+    const now=r.getBoundingClientRect().width;
     if(!now) return;
     const base=parseFloat(getComputedStyle(title).fontSize);
     const frame=$('#heroFrame') || hero;
@@ -1099,7 +1107,32 @@ function daysLeft(){
     });
   }
 
-  const run=()=>{ fit(); shrink(); };
+  /* 넓은 화면에서 사진 틀의 폭을 '실제로 잰 페이지 높이 × 2/3' 로 정합니다.
+     CSS 계산(vh·zoom)은 브라우저마다 어긋날 때가 있어, 잰 값이 확실합니다. */
+  const frameEl=$('#heroFrame');
+  let shot = 2/3;                       /* 사진을 받기 전 임시 비율 */
+  /* 넓은 화면에서 사진 틀 크기 —
+     높이는 항상 화면을 꽉 채우고(위아래 여백 없음), 폭만 줄입니다.
+     MAXW 보다 좁아지면 사진 좌우가 조금 잘립니다. 폰에서 보이는 모습과 같습니다. */
+  const MAXW = wideCap();
+  function sizeFrame(){
+    if(!frameEl) return;
+    if(innerWidth < 700){ frameEl.style.width=''; frameEl.style.height=''; return; }
+    const h = hero.clientHeight;
+    if(!h) return;
+    frameEl.style.height = '100%';
+    frameEl.style.width  = Math.round(Math.min(h * shot, MAXW)) + 'px';
+  }
+
+  const run=()=>{ sizeFrame(); fit(); shrink(); };
+
+  /* 사진이 도착하면 실제 파일 비율로 다시 잡습니다 */
+  if(bg){
+    const read=()=>{ if(bg.naturalWidth && bg.naturalHeight){
+      shot = bg.naturalWidth / bg.naturalHeight; run(); } };
+    bg.addEventListener('load', read);
+    if(bg.complete) read();
+  }
   run();
   addEventListener('resize',run);
   addEventListener('orientationchange',run);
@@ -1303,12 +1336,22 @@ function daysLeft(){
 
     /* 사진이 실제로 어떤 비율인지는 받아본 뒤에 알 수 있습니다.
        CONFIG 에 안 적어두셨어도 여기서 알아서 잡습니다.          */
+    const sizeFrame = (w,h) => {
+      /* 넓은 화면에서는 잰 높이에 맞춰 폭을 정하되,
+         첫 화면·전경 사진과 같은 상한(--wide)을 넘지 않게 합니다. */
+      if(innerWidth < 700 || w >= h){ frame.style.width=''; return; }
+      const ph = pg.clientHeight;
+      if(!ph) return;
+      frame.style.width = Math.round(Math.min(ph * w / h, wideCap())) + 'px';
+    };
     img.onload = () => {
       const w=img.naturalWidth, h=img.naturalHeight;
       if(!w || !h) return;
       if(!M.ratio) frame.style.setProperty('--moment-ratio', `${w} / ${h}`);
       /* 가로가 더 긴 사진이면 잘라내지 않고 통째로 보여줍니다 */
       frame.classList.toggle('wide', w > h);
+      sizeFrame(w,h);
+      addEventListener('resize', () => sizeFrame(w,h));
     };
     img.src = M.img;
     img.onerror = () => { img.style.display='none'; };
